@@ -4,7 +4,6 @@ from datetime import datetime
 from multiprocessing import Pool
 
 from sqlalchemy import select
-from watchfiles import awatch
 
 from parser.get_single_query_data import get_query_data
 from db.base import async_session_maker

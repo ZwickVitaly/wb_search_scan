@@ -9,10 +9,10 @@ from settings import SEARCH_URL, logger
 async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=10):
     _data = {}
     counter = 0
-    async with ClientSession() as session:
-        while (not _data.get("data") or len(_data.get("data").get("products")) < 2) and counter < rqa:
-            counter += 1
-            logger.info(f"{counter} -> {query_string}")
+    while (not _data.get("data") or len(_data.get("data").get("products")) < 2) and counter < rqa:
+        counter += 1
+        logger.info(f"{counter} -> {query_string}")
+        async with ClientSession() as session:
             try:
                 async with session.get(
                     url=SEARCH_URL,
@@ -41,8 +41,7 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=10):
                 await asyncio.sleep(1)
                 counter -= 1
                 continue
-        await session.close()
-        return _data.get("data")
+    return _data.get("data")
 
 
 # взято с https://user-geo-data.wildberries.ru/get-geo-info?latitude=[ШИРОТА float]&longitude=[ДОЛГОТА float]
