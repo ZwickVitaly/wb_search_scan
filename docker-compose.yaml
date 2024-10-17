@@ -1,0 +1,38 @@
+services:
+
+  db:
+    image: postgres
+    container_name: ${PG_HOST}
+    restart: unless-stopped
+    ports:
+      - "${PG_PORT}:5432"
+    command: postgres -c 'max_connections=250'
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    env_file:
+      - .env
+    # healthcheck:
+    #   test: []
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    volumes:
+      - ./app_data:/var/lib/postgresql/data
+
+  searcher:
+    build:
+      dockerfile: Dockerfile_Searcher
+    container_name: wb_searcher
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_started
+
+
+networks:
+  wb_search:
