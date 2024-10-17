@@ -13,7 +13,7 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
         counter += 1
         logger.info(f"{counter} -> {query_string}")
         try:
-            async with ClientSession(timeout=timeout) as session:
+            async with ClientSession() as session:
                     async with session.get(
                         url=SEARCH_URL,
                         params={
@@ -27,6 +27,8 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
                     ) as response:
                         if response.ok:
                             _data = await response.json(content_type="text/plain")
+                        else:
+                            continue
         except (ContentTypeError, TypeError, JSONDecodeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError):
             logger.critical("ОШИБКА")
             await asyncio.sleep(0.5)
