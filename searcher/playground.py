@@ -4,6 +4,7 @@ from datetime import datetime
 from multiprocessing import Pool
 
 from sqlalchemy import select
+from watchfiles import awatch
 
 from parser.get_single_query_data import get_query_data
 from db.base import async_session_maker
@@ -51,7 +52,8 @@ async def get_r_data(r, city, date):
         except Exception as e:
             logger.info(f"{e}")
 
-async def get_city_result(city, requests, date):
+async def get_city_result(city, date):
+    requests = list(await get_requests_data())
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     for _ in range(0, len(requests) + 10, 10):
@@ -76,13 +78,10 @@ def get_results():
     loop = asyncio.new_event_loop()
     cities = loop.run_until_complete(get_cities_data())
     logger.info("Города есть")
-    requests = loop.run_until_complete(get_requests_data())
-    logger.info("Запросы есть")
     cities = list(cities)
-    requests = list(requests)
     logger.info("Начало обхода")
     with Pool(len(cities)) as p:
-        tasks = [p.apply_async(run_pool_threads, args=[get_city_result, city, requests, today]) for city in cities]
+        tasks = [p.apply_async(run_pool_threads, args=[get_city_result, city, today]) for city in cities]
         p.close()
         p.join()
     end = time.time()
