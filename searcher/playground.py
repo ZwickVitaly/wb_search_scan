@@ -39,6 +39,8 @@ async def get_r_data(r, city, date):
             result = await asyncio.gather(*tasks)
             for res in result:
                 full_res.extend(res.get("products"))
+            if not full_res:
+                return
             request_product = RequestProduct(
                 city=city.id,
                 query=r.query,
@@ -60,7 +62,7 @@ async def get_city_result(city, date):
         logger.info(len(tasks))
         requests_products = await asyncio.gather(*tasks)
         async with async_session_maker() as session:
-            session.add_all(requests_products)
+            session.add_all([pr for pr in requests_products if pr])
             await session.commit()
         prev = _
         logger.info(f"{city.name} BATCH")
