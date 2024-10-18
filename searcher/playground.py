@@ -35,7 +35,7 @@ async def get_r_data(r, city, date):
     while True:
         try:
             full_res = []
-            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=5)) for i in range(1,2)]
+            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=5)) for i in range(1,4)]
             result = await asyncio.gather(*tasks)
             for res in result:
                 full_res.extend(res.get("products"))
@@ -65,7 +65,7 @@ async def get_city_result(city, date):
             session.add_all([pr for pr in requests_products if pr])
             await session.commit()
         prev = _
-        logger.info(f"{city.name} BATCH")
+        logger.info(f"{city.name} BATCH {_}")
     logger.info(f"{city.name} complete")
 
 def run_pool_threads(func, *args, **kwargs):

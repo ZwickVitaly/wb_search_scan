@@ -14,4 +14,7 @@ async def prepare_csv_contents(contents: list[str]):
             requests_data.append(row_values)
         except (ValueError, TypeError, IndexError):
             error_rows.append(row)
+    for r in requests_data:
+        if r[0].isdigit():
+            print(r[0])
     return requests_data, error_rows
