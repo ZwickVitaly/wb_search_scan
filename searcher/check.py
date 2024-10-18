@@ -8,7 +8,8 @@ async def check():
     async with async_session_maker() as session:
         rqs = await session.execute(select(func.count()).select_from(RequestProduct))
         result = rqs.scalars()
-    print(result)
+    for i in result:
+        print(i)
     # print(len([r.query for r in result if r.query.isdigit()]))
 
 
