@@ -56,7 +56,7 @@ async def get_r_data(r, city, date, sem):
 
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
-    semaphore = Semaphore(1000)
+    semaphore = Semaphore(200)
     logger.info(f"{city.name} start, {len(requests)}")
     tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, sem=semaphore)) for i, r in enumerate(requests)]
     logger.info(len(tasks))
