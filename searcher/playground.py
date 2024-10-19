@@ -25,18 +25,18 @@ async def get_requests_data():
         requests = q.scalars()
     return requests
 
-async def try_except_query_data(query_string, dest, limit, page, sem, rqa=5):
+async def try_except_query_data(query_string, dest, limit, page, rqa=5):
     try:
-        x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, sem=sem, rqa=rqa, timeout=30)
+        x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
     except ValueError:
         x = {"products": []}
     return x
 
-async def get_r_data(r, city, date, sem):
+async def get_r_data(r, city, date):
     while True:
         try:
             full_res = []
-            tasks = [asyncio.create_task(try_except_query_data(sem=sem, query_string=r.query, dest=city.dest, limit=300, page=i, rqa=3)) for i in range(1,5)]
+            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=3)) for i in range(1,5)]
             result = await asyncio.gather(*tasks)
             for res in result:
                 full_res.extend(res.get("products"))
@@ -56,14 +56,17 @@ async def get_r_data(r, city, date, sem):
 
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
-    semaphore = Semaphore(200)
     logger.info(f"{city.name} start, {len(requests)}")
-    tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, sem=semaphore)) for i, r in enumerate(requests)]
-    logger.info(len(tasks))
-    requests_products = await asyncio.gather(*tasks)
-    async with async_session_maker() as session:
-        session.add_all([pr for pr in requests_products if pr])
-        await session.commit()
+    prev = 0
+    for _ in range(0, len(requests) + 50, 50):
+        tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date)) for i, r in enumerate(requests[prev:_])]
+        logger.info(len(tasks))
+        requests_products = await asyncio.gather(*tasks)
+        async with async_session_maker() as session:
+            session.add_all([pr for pr in requests_products if pr])
+            await session.commit()
+        prev = _
+        logger.info(f"{city.name} BATCH {_}")
     logger.info(f"{city.name} complete")
 
 def run_pool_threads(func, *args, **kwargs):
