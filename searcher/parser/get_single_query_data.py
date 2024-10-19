@@ -28,6 +28,7 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
                         if response.ok:
                             _data = await response.json(content_type="text/plain")
                         else:
+                            logger.critical("response not ok")
                             continue
         except (ContentTypeError, TypeError, JSONDecodeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError):
             logger.critical("ОШИБКА")
