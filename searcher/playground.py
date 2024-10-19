@@ -26,7 +26,7 @@ async def get_requests_data():
 
 async def try_except_query_data(query_string, dest, limit, page, rqa=5):
     try:
-        x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa)
+        x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=2)
     except ValueError:
         x = {"products": []}
     return x
@@ -57,7 +57,7 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
-    for _ in range(0, len(requests) + 20, 20):
+    for _ in range(0, len(requests) + 100, 100):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         requests_products = await asyncio.gather(*tasks)
