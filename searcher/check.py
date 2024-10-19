@@ -6,9 +6,9 @@ from db.base import async_session_maker
 
 async def check():
     async with async_session_maker() as session:
-        rqs = await session.execute(select(func.count()).select_from(RequestProduct))
+        rqs = await session.execute(select(RequestProduct))
         result = rqs.scalars()
     for i in result:
-        print(i)
+        print(i.products)
 
 asyncio.run(check())
