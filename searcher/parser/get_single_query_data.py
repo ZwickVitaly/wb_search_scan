@@ -6,7 +6,7 @@ from aiohttp import ClientSession, ContentTypeError, client_exceptions, ClientTi
 from settings import SEARCH_URL, logger
 
 
-async def get_query_data(query_string, sem, dest, limit, page, rqa=5, timeout=5):
+async def get_query_data(query_string, sem: asyncio.Semaphore, dest, limit, page, rqa=5, timeout=5):
     _data = {}
     counter = 0
     while (not _data.get("data") or len(_data.get("data").get("products")) < 2) and counter < rqa:
@@ -32,6 +32,8 @@ async def get_query_data(query_string, sem, dest, limit, page, rqa=5, timeout=5)
                                 logger.critical("response not ok")
                                 continue
         except (ContentTypeError, TypeError, JSONDecodeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError):
+            await session.close()
+            sem.release()
             logger.critical("ОШИБКА")
             await asyncio.sleep(0.5)
             counter -= 1
