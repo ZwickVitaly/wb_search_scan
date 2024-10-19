@@ -57,7 +57,7 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
-    for _ in range(0, len(requests) + 100, 100):
+    for _ in range(0, len(requests) + 200, 200):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         requests_products = await asyncio.gather(*tasks)
@@ -81,8 +81,11 @@ def get_results():
     logger.info("Города есть")
     cities = list(cities)
     logger.info("Начало обхода")
-    with Pool(len(cities)) as p:
-        tasks = [p.apply_async(run_pool_threads, args=[get_city_result, city, today]) for city in cities]
+    with Pool(len(cities) * 2) as p:
+        tasks = [
+            p.apply_async(run_pool_threads, args=[get_city_result, city, today])
+            for city in cities
+        ]
         p.close()
         p.join()
     end = time.time()
