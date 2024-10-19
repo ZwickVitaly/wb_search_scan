@@ -9,7 +9,7 @@ from settings import SEARCH_URL, logger
 async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
     _data = {}
     counter = 0
-    while not _data.get("data") or len(_data.get("data").get("products")) < 2:
+    while (not _data.get("data") or len(_data.get("data").get("products")) < 2) and counter < rqa:
         counter += 1
         logger.info(f"{counter} -> {query_string}")
         try:
