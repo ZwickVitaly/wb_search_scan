@@ -9,6 +9,6 @@ async def check():
         rqs = await session.execute(select(RequestProduct))
         result = rqs.scalars()
     for i in result:
-        print(i.products)
+        print(len(i.products))
 
 asyncio.run(check())
