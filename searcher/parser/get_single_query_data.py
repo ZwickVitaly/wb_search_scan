@@ -6,30 +6,31 @@ from aiohttp import ClientSession, ContentTypeError, client_exceptions, ClientTi
 from settings import SEARCH_URL, logger
 
 
-async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
+async def get_query_data(query_string, sem, dest, limit, page, rqa=5, timeout=5):
     _data = {}
     counter = 0
     while (not _data.get("data") or len(_data.get("data").get("products")) < 2) and counter < rqa:
         counter += 1
         logger.info(f"{counter} -> {query_string}")
         try:
-            async with ClientSession() as session:
-                    async with session.get(
-                        url=SEARCH_URL,
-                        params={
-                            "resultset": "catalog",
-                            "query": query_string,
-                            "limit": limit,
-                            "dest": dest,
-                            "page": page,
-                        },
-                        timeout=timeout
-                    ) as response:
-                        if response.ok:
-                            _data = await response.json(content_type="text/plain")
-                        else:
-                            logger.critical("response not ok")
-                            continue
+            async with sem:
+                async with ClientSession() as session:
+                        async with session.get(
+                            url=SEARCH_URL,
+                            params={
+                                "resultset": "catalog",
+                                "query": query_string,
+                                "limit": limit,
+                                "dest": dest,
+                                "page": page,
+                            },
+                            timeout=timeout
+                        ) as response:
+                            if response.ok:
+                                _data = await response.json(content_type="text/plain")
+                            else:
+                                logger.critical("response not ok")
+                                continue
         except (ContentTypeError, TypeError, JSONDecodeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError):
             logger.critical("ОШИБКА")
             await asyncio.sleep(0.5)
