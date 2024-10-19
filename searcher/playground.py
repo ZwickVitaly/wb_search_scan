@@ -58,7 +58,7 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
-    for _ in range(0, len(requests) + 50, 50):
+    for _ in range(0, len(requests) + 75, 75):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         requests_products = await asyncio.gather(*tasks)
