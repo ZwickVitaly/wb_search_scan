@@ -35,6 +35,7 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
             await session.close()
             await asyncio.sleep(0.5)
             counter -= 1
+            timeout += 1
             continue
 
     return _data.get("data")
