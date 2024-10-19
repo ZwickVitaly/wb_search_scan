@@ -35,7 +35,7 @@ async def get_r_data(r, city, date):
     while True:
         try:
             full_res = []
-            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=5)) for i in range(1,4)]
+            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=3)) for i in range(1,5)]
             result = await asyncio.gather(*tasks)
             for res in result:
                 full_res.extend(res.get("products"))
@@ -54,7 +54,7 @@ async def get_r_data(r, city, date):
             logger.info(f"{e}")
 
 async def get_city_result(city, date):
-    requests = list(await get_requests_data())
+    requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     for _ in range(0, len(requests) + 100, 100):

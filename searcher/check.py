@@ -10,7 +10,5 @@ async def check():
         result = rqs.scalars()
     for i in result:
         print(i)
-    # print(len([r.query for r in result if r.query.isdigit()]))
-
 
 asyncio.run(check())
