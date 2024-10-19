@@ -36,7 +36,7 @@ async def get_r_data(r, city, date):
     while True:
         try:
             full_res = []
-            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=300, page=i, rqa=5)) for i in range(1,4)]
+            tasks = [asyncio.create_task(try_except_query_data(query_string=r.query, dest=city.dest, limit=250, page=i, rqa=3)) for i in range(1,3)]
             result = await asyncio.gather(*tasks)
             for res in result:
                 full_res.extend(res.get("products"))
