@@ -9,7 +9,7 @@ from sqlalchemy import select
 from parser.get_single_query_data import get_query_data
 from db.base import async_session_maker
 from db import City, Request, RequestProduct
-from settings import logger
+# from settings import logger
 
 
 
@@ -87,40 +87,40 @@ async def get_r_data(r, city, date, http_session):
             )
             return request_product
         except Exception as e:
-            logger.critical(f"{e}")
+#             logger.critical(f"{e}")
             break
 
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
-    logger.info(f"{city.name} start, {len(requests)}")
+#     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     async with ClientSession() as http_session:
         for _ in range(100, len(requests) + 100, 100):
-            logger.critical(f"ЧТО ЗА ФИГНЯ {prev} - {_}")
+#             logger.critical(f"ЧТО ЗА ФИГНЯ {prev} - {_}")
             tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for r in requests[prev:_]]
-            logger.info(len(tasks))
+#             logger.info(len(tasks))
             rp = await asyncio.gather(*tasks)
             prev = _
-            logger.critical(len(rp))
+#             logger.critical(len(rp))
             async with async_session_maker() as session:
                 session.add_all(rp)
                 await session.commit()
-            logger.info(f"{city.name} BATCH {_}")
-    logger.info(f"{city.name} complete")
+#             logger.info(f"{city.name} BATCH {_}")
+#     logger.info(f"{city.name} complete")
 
 def run_pool_threads(func, *args, **kwargs):
-    logger.info("Применен процесс")
+#     logger.info("Применен процесс")
     asyncio.run(func(*args, **kwargs))
 
 def get_results():
     start = time.time()
-    logger.info("Вход в программу")
+#     logger.info("Вход в программу")
     today = datetime.now().date()
     loop = asyncio.new_event_loop()
     cities = loop.run_until_complete(get_cities_data())
-    logger.info("Города есть")
+#     logger.info("Города есть")
     cities = list(cities)
-    logger.info("Начало обхода")
+#     logger.info("Начало обхода")
     with Pool(len(cities)) as p:
         tasks = [
             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
@@ -129,7 +129,7 @@ def get_results():
         p.close()
         p.join()
     end = time.time()
-    logger.info(f"END TIME: {round(end - start, 2)}s")
+#     logger.info(f"END TIME: {round(end - start, 2)}s")
 
 get_results()
 
