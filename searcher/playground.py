@@ -81,6 +81,7 @@ async def get_r_data(r, city, date, queue, http_session):
             break
         except Exception as e:
             logger.critical(f"{e}")
+            break
 
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
