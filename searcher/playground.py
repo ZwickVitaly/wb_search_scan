@@ -87,7 +87,7 @@ async def get_city_result(city, date):
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     async with ClientSession() as http_session:
-        for _ in range(0, len(requests) + 200, 200):
+        for _ in range(0, len(requests) + 100, 100):
             tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
             logger.info(len(tasks))
             rp = await asyncio.gather(*tasks)
