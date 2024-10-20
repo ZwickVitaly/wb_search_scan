@@ -9,7 +9,7 @@ from sqlalchemy import select
 from parser.get_single_query_data import get_query_data
 from db.base import async_session_maker
 from db import City, Request, RequestProduct
-# from settings import logger
+from settings import logger
 
 
 
