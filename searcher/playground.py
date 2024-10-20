@@ -87,7 +87,7 @@ async def get_city_result(city, date):
     prev = 0
     queue = asyncio.Queue()
     save_db_task = asyncio.create_task(save_to_db(queue))
-    for _ in range(0, len(requests) + 1000, 1000):
+    for _ in range(0, len(requests) + 75, 75):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         await asyncio.gather(*tasks)
