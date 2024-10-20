@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from multiprocessing import Pool
 
+from aiohttp import ClientSession
 from sqlalchemy import select
 
 from parser.get_single_query_data import get_query_data
@@ -41,14 +42,14 @@ async def save_to_db(queue):
         if item is None:
             break
 
-async def try_except_query_data(query_string, dest, limit, page, rqa=5):
+async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
-        x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
+        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
     except ValueError:
         x = {"products": []}
     return x
 
-async def get_r_data(r, city, date, queue):
+async def get_r_data(r, city, date, queue, http_session):
     while True:
         try:
             full_res = []
@@ -59,7 +60,8 @@ async def get_r_data(r, city, date, queue):
                         dest=city.dest,
                         limit=300,
                         page=i,
-                        rqa=3
+                        rqa=3,
+                        http_session=http_session,
                     )
                 ) for i in range(1,4)
             ]
@@ -87,12 +89,13 @@ async def get_city_result(city, date):
     prev = 0
     queue = asyncio.Queue()
     save_db_task = asyncio.create_task(save_to_db(queue))
-    for _ in range(0, len(requests) + 75, 75):
-        tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue)) for i, r in enumerate(requests[prev:_])]
-        logger.info(len(tasks))
-        await asyncio.gather(*tasks)
-        prev = _
-        logger.info(f"{city.name} BATCH {_}")
+    async with ClientSession() as http_session:
+        for _ in range(0, len(requests) + 75, 75):
+            tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
+            logger.info(len(tasks))
+            await asyncio.gather(*tasks)
+            prev = _
+            logger.info(f"{city.name} BATCH {_}")
     await queue.put(None)
     await save_db_task
     logger.info(f"{city.name} complete")
