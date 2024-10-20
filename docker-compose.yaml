@@ -25,10 +25,10 @@ services:
     build:
       dockerfile: Dockerfile_Searcher
     container_name: wb_searcher
-    ports:
-      - "5000:5000"
     env_file:
       - .env
+    volumes:
+      - ./logs:/app_data/logs
     depends_on:
       db:
         condition: service_started
