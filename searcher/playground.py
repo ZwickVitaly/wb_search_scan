@@ -30,7 +30,7 @@ async def save_to_db(queue):
         items = []
         item = None
         while len(items) < 100:
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.01)
             item = await queue.get()
             if item is None:
                 break
