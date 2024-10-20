@@ -43,7 +43,7 @@ async def save_to_db(queue):
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
-        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=5)
+        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
     except ValueError:
         x = {"products": []}
     return x
@@ -87,7 +87,7 @@ async def get_city_result(city, date):
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     async with ClientSession() as http_session:
-        for _ in range(0, len(requests) + 100, 100):
+        for _ in range(0, len(requests) + 250, 250):
             tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
             logger.info(len(tasks))
             rp = await asyncio.gather(*tasks)
