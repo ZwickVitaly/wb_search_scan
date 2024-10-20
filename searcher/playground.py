@@ -29,8 +29,7 @@ async def save_to_db(queue):
     while True:
         items = []
         item = None
-        while len(items) < 100:
-            await asyncio.sleep(0.01)
+        while len(items) < 1000:
             item = await queue.get()
             if item is None:
                 break
@@ -88,7 +87,7 @@ async def get_city_result(city, date):
     prev = 0
     queue = asyncio.Queue()
     save_db_task = asyncio.create_task(save_to_db(queue))
-    for _ in range(0, len(requests) + 50, 50):
+    for _ in range(0, len(requests) + 100, 100):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         await asyncio.gather(*tasks)
