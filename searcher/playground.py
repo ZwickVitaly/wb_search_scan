@@ -77,6 +77,7 @@ async def get_r_data(r, city, date, queue):
                 date=date
             )
             await queue.put(request_product)
+            break
         except Exception as e:
             logger.info(f"{e}")
 
