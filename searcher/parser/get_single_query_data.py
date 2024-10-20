@@ -26,7 +26,10 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
                         timeout=timeout
                     ) as response:
                         if response.ok:
-                            _data = await response.json(content_type="text/plain")
+                            try:
+                                _data = await response.json(content_type="text/plain")
+                            except JSONDecodeError:
+                                _data = await response.json()
                         else:
                             logger.critical("response not ok")
                             continue
