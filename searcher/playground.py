@@ -66,7 +66,7 @@ async def get_r_data(r, city, date, http_session):
             ]
             result = await asyncio.gather(*tasks)
             for res in result:
-                full_res.extend(res.get("products"))
+                full_res.extend(res.get("products", []))
             if not full_res:
                 return
             request_product = RequestProduct(
