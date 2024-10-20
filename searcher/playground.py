@@ -114,7 +114,7 @@ def run_pool_threads(func, *args, **kwargs):
 
 def get_results():
     start = time.time()
-#     logger.info("Вход в программу")
+    logger.info("Вход в программу")
     today = datetime.now().date()
     loop = asyncio.new_event_loop()
     cities = loop.run_until_complete(get_cities_data())
