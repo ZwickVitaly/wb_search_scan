@@ -25,21 +25,21 @@ async def get_requests_data():
         requests = q.scalars()
     return requests
 
-async def save_to_db(queue):
-    while True:
-        items = []
-        item = None
-        while len(items) < 1000:
-            item = await queue.get()
-            if item is None:
-                break
-            items.append(item)
-        if items:
-            async with async_session_maker() as session:
-                session.add_all(items)
-                await session.commit()
-        if item is None:
-            break
+# async def save_to_db(queue):
+#     while True:
+#         items = []
+#         item = None
+#         while len(items) < 1000:
+#             item = await queue.get()
+#             if item is None:
+#                 break
+#             items.append(item)
+#         if items:
+#             async with async_session_maker() as session:
+#                 session.add_all(items)
+#                 await session.commit()
+#         if item is None:
+#             break
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
