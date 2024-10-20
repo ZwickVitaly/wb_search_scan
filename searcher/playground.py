@@ -88,10 +88,11 @@ async def get_city_result(city, date):
     prev = 0
     async with ClientSession() as http_session:
         for _ in range(0, len(requests) + 250, 250):
-            tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
+            tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for r in requests[prev:_]]
             logger.info(len(tasks))
             rp = await asyncio.gather(*tasks)
             prev = _
+            logger.critical(len(rp))
             async with async_session_maker() as session:
                 session.add_all(rp)
                 await session.commit()
