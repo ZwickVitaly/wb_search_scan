@@ -43,7 +43,7 @@ async def save_to_db(queue):
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
-        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=3)
+        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=5)
     except ValueError:
         x = {"products": []}
     return x
