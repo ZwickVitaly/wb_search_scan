@@ -76,7 +76,7 @@ async def get_r_data(r, city, date, http_session):
             for res in result:
                 full_res.extend(res.get("products", []))
             if not full_res:
-                return
+                full_res = []
             request_product = RequestProduct(
                 city=city.id,
                 query=r.query,
