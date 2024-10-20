@@ -25,6 +25,22 @@ async def get_requests_data():
         requests = q.scalars()
     return requests
 
+async def save_to_db(queue):
+    while True:
+        items = []
+        item = None
+        while len(items) < 100:
+            item = await queue.get()
+            if item is None:
+                break
+            items.append(item)
+        if items:
+            async with async_session_maker() as session:
+                session.add_all(items)
+                await session.commit()
+        if item is None:
+            break
+
 async def try_except_query_data(query_string, dest, limit, page, rqa=5):
     try:
         x = await get_query_data(query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
@@ -32,7 +48,7 @@ async def try_except_query_data(query_string, dest, limit, page, rqa=5):
         x = {"products": []}
     return x
 
-async def get_r_data(r, city, date):
+async def get_r_data(r, city, date, queue):
     while True:
         try:
             full_res = []
@@ -60,7 +76,7 @@ async def get_r_data(r, city, date):
                 natural_positions=[p.get("log", {}).get("position", 0) for p in full_res],
                 date=date
             )
-            return request_product
+            await queue.put(request_product)
         except Exception as e:
             logger.info(f"{e}")
 
@@ -68,15 +84,16 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
+    queue = asyncio.Queue()
+    save_db_task = asyncio.create_task(save_to_db(queue))
     for _ in range(0, len(requests) + 50, 50):
-        tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date)) for i, r in enumerate(requests[prev:_])]
+        tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
-        requests_products = await asyncio.gather(*tasks)
-        async with async_session_maker() as session:
-            session.add_all([pr for pr in requests_products if pr])
-            await session.commit()
+        await asyncio.gather(*tasks)
         prev = _
         logger.info(f"{city.name} BATCH {_}")
+    await queue.put(None)
+    await save_db_task
     logger.info(f"{city.name} complete")
 
 def run_pool_threads(func, *args, **kwargs):
@@ -92,7 +109,7 @@ def get_results():
     logger.info("Города есть")
     cities = list(cities)
     logger.info("Начало обхода")
-    with Pool(len(cities) * 2) as p:
+    with Pool(len(cities)) as p:
         tasks = [
             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
             for city in cities
