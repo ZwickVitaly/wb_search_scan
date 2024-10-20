@@ -41,7 +41,7 @@ async def get_requests_data():
 #         if item is None:
 #             break
 
-async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
+async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=3):
     try:
         x = await get_query_data(
             http_session=http_session,
