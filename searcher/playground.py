@@ -79,7 +79,7 @@ async def get_r_data(r, city, date, queue):
             await queue.put(request_product)
             break
         except Exception as e:
-            logger.info(f"{e}")
+            logger.critical(f"{e}")
 
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
@@ -87,7 +87,7 @@ async def get_city_result(city, date):
     prev = 0
     queue = asyncio.Queue()
     save_db_task = asyncio.create_task(save_to_db(queue))
-    for _ in range(0, len(requests) + 100, 100):
+    for _ in range(0, len(requests) + 1000, 1000):
         tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue)) for i, r in enumerate(requests[prev:_])]
         logger.info(len(tasks))
         await asyncio.gather(*tasks)
