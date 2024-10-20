@@ -1,5 +1,4 @@
 import asyncio
-from asyncio.locks import Semaphore
 import time
 from datetime import datetime
 from multiprocessing import Pool
