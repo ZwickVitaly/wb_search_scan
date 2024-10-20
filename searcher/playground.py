@@ -43,12 +43,12 @@ async def save_to_db(queue):
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
-        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
+        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=3)
     except ValueError:
         x = {"products": []}
     return x
 
-async def get_r_data(r, city, date, queue, http_session):
+async def get_r_data(r, city, date, http_session):
     while True:
         try:
             full_res = []
@@ -77,8 +77,7 @@ async def get_r_data(r, city, date, queue, http_session):
                 natural_positions=[p.get("log", {}).get("position", 0) for p in full_res],
                 date=date
             )
-            await queue.put(request_product)
-            break
+            return request_product
         except Exception as e:
             logger.critical(f"{e}")
             break
@@ -87,17 +86,16 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
-    queue = asyncio.Queue()
-    save_db_task = asyncio.create_task(save_to_db(queue))
     async with ClientSession() as http_session:
-        for _ in range(0, len(requests) + 300, 300):
-            tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, queue=queue, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
+        for _ in range(0, len(requests) + 200, 200):
+            tasks = [asyncio.create_task(get_r_data(r=r, city=city, date=date, http_session=http_session)) for i, r in enumerate(requests[prev:_])]
             logger.info(len(tasks))
-            await asyncio.gather(*tasks)
+            rp = await asyncio.gather(*tasks)
             prev = _
+            async with async_session_maker() as session:
+                session.add_all(rp)
+                await session.commit()
             logger.info(f"{city.name} BATCH {_}")
-    await queue.put(None)
-    await save_db_task
     logger.info(f"{city.name} complete")
 
 def run_pool_threads(func, *args, **kwargs):

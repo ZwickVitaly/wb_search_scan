@@ -28,7 +28,7 @@ async def get_query_data(http_session, query_string, dest, limit, page, rqa=5, t
                     try:
                         _data = await response.json(content_type="text/plain")
                     except ContentTypeError:
-                        return {}
+                        return {"data": {"products": []}}
                 else:
                     logger.critical("response not ok")
                     continue
