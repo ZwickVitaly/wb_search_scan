@@ -64,7 +64,8 @@ async def get_r_data(r, city, date):
         except Exception as e:
             logger.info(f"{e}")
 
-async def get_city_result(city, requests, date):
+async def get_city_result(city, date):
+    requests = [r for r in await get_requests_data() if not r.query.isdigit()]
     logger.info(f"{city.name} start, {len(requests)}")
     prev = 0
     for _ in range(0, len(requests) + 50, 50):
@@ -88,16 +89,12 @@ def get_results():
     today = datetime.now().date()
     loop = asyncio.new_event_loop()
     cities = loop.run_until_complete(get_cities_data())
-    requests = [r for r in loop.run_until_complete(get_requests_data()) if not r.query.isdigit()]
     logger.info("Города есть")
     cities = list(cities)
     logger.info("Начало обхода")
     with Pool(len(cities) * 2) as p:
         tasks = [
-            (
-                p.apply_async(run_pool_threads, args=[get_city_result, city, requests[:len(requests) // 2], today]),
-                p.apply_async(run_pool_threads, args=[get_city_result, city, requests[len(requests) // 2:], today])
-            )
+            p.apply_async(run_pool_threads, args=[get_city_result, city, today])
             for city in cities
         ]
         p.close()
