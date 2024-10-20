@@ -129,7 +129,7 @@ def get_results():
         p.close()
         p.join()
     end = time.time()
-#     logger.info(f"END TIME: {round(end - start, 2)}s")
+    logger.info(f"END TIME: {round(end - start, 2)}s")
 
 get_results()
 
