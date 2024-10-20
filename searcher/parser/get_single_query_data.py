@@ -30,6 +30,7 @@ async def get_query_data(query_string, dest, limit, page, rqa=5, timeout=5):
                                 _data = await response.json(content_type="text/plain")
                             except ContentTypeError:
                                 _data = await response.json()
+                                logger.critical(_data)
                         else:
                             logger.critical("response not ok")
                             continue
