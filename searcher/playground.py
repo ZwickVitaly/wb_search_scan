@@ -43,7 +43,15 @@ async def get_requests_data():
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
-        x = await get_query_data(http_session=http_session, query_string=query_string, dest=dest, limit=limit, page=page, rqa=rqa, timeout=10)
+        x = await get_query_data(
+            http_session=http_session,
+            query_string=query_string,
+            dest=dest,
+            limit=limit,
+            page=page,
+            rqa=rqa,
+            timeout=3
+        )
     except ValueError:
         x = {"products": []}
     return x
