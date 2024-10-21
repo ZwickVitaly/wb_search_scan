@@ -29,6 +29,7 @@ async def get_requests_data():
     return requests
 
 async def save_to_db(queue, model, update=False):
+    logger.critical("ЕЩЁ")
     while True:
         items = []
         item = None
@@ -131,6 +132,7 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 )
                 #     seen.add(p.get("id"))
                 # seen.clear()
+            logger.critical("ПОЧТИ 2")
             await product_queue.put(products)
             request_product = {
                 "city": city.id,
@@ -141,6 +143,7 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 "date": date
             }
             await request_product_queue.put(request_product)
+            logger.critical("ПОЧТИ 3")
             return
         except Exception as e:
             logger.critical(f"{e}")
