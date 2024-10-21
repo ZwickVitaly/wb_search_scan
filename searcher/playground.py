@@ -65,6 +65,7 @@ async def save_to_db(queue, model, update=False):
                         logger.error(f"{e}")
                 await session.commit()
         if item is None:
+            await queue.put(item)
             break
 
 
@@ -153,8 +154,8 @@ async def get_city_result(city, date):
     product_queue = asyncio.Queue()
     request_product_queue = asyncio.Queue()
     workers_queue = asyncio.Queue()
-    product_save_task = asyncio.create_task(save_to_db(product_queue, Product, update=True))
-    request_product_save_task = asyncio.create_task(save_to_db(request_product_queue, RequestProduct))
+    product_save_task = [asyncio.create_task(save_to_db(product_queue, Product, update=True)) for _ in range(4)]
+    request_product_save_task = [asyncio.create_task(save_to_db(request_product_queue, RequestProduct)) for _ in range(4)]
     async with ClientSession() as http_session:
         requests_tasks = [
             asyncio.create_task(
@@ -174,8 +175,7 @@ async def get_city_result(city, date):
         await asyncio.gather(*requests_tasks)
         await product_queue.put(None)
         await request_product_queue.put(None)
-        await request_product_save_task
-        await product_save_task
+        await asyncio.gather(*request_product_save_task, *product_save_task)
 #             logger.info(f"{city.name} BATCH {_}")
 #     logger.info(f"{city.name} complete")
 
