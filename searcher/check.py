@@ -11,9 +11,9 @@ async def check():
         result = rqs.scalars()
     for r in result:
         print(r.query, r.date, r.city)
-    rqs = await session.execute(select(Request).filter(Request.query == "вечная спичка огниво"))
-    result = rqs.scalars()
-    for r in result:
-        print(r.query)
+        rqs = await session.execute(select(Request).filter(Request.query == "вечная спичка огниво"))
+        result = rqs.scalars()
+        for r in result:
+            print(r.query)
 
 asyncio.run(check())
