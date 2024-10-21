@@ -67,6 +67,7 @@ async def save_to_db(queue, model, update=False):
                                 set_=excluded_fields
                             )
                         )
+                        logger.critical("УСПЕХ")
                     except Exception as e:
                         logger.error(f"{e}")
                 await session.commit()
