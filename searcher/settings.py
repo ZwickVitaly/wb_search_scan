@@ -3,10 +3,10 @@ from os import getenv
 from pathlib import Path
 from sys import stdout
 from dotenv import load_dotenv
+from pytz import timezone
 
 from loguru import logger
 
-# from pytz import timezone
 load_dotenv()
 
 DEBUG = getenv("DEBUG", "1") == "1"
@@ -21,7 +21,7 @@ logger.add(
 )
 logger.add(stdout, level="DEBUG" if DEBUG else "INFO")
 
-
+TIMEZONE = timezone("Europe/Moscow")
 
 SEARCH_URL = "https://search.wb.ru/exactmatch/ru/common/v4/search"
 
