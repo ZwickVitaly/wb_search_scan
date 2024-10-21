@@ -26,7 +26,7 @@ async def check(wb_id):
                     ekat[r.query] = i
                 elif r.city == 4:
                     vlad[r.query] = i
-    res = [{"Москва":list(moscow)}, {"Краснодар":list(krasnodar)}, {"Екатеринбург":list(ekat)}, {"Владивосток":list(vlad)}]
+    res = [{"Москва":moscow}, {"Краснодар":krasnodar}, {"Екатеринбург":ekat}, {"Владивосток":vlad}]
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
 
