@@ -13,11 +13,11 @@ services:
       POSTGRES_DB: ${PG_DATABASE}
     env_file:
       - .env
-    # healthcheck:
-    #   test: []
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+       test: []
+       interval: 10s
+       timeout: 5s
+       retries: 5
     volumes:
       - ./app_data:/var/lib/postgresql/data
 
@@ -31,7 +31,7 @@ services:
       - ./logs:/app_data/logs
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
 
 
 networks:
