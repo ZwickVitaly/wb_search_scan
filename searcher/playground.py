@@ -60,7 +60,6 @@ async def save_to_db(queue, model, update=False):
                                 index_elements=primary_fields,
                             )
                         )
-                        logger.critical(f"УСПЕХ, {items}")
                     except Exception as e:
                         logger.error(f"{e}")
                 await session.commit()
