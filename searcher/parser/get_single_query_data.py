@@ -32,8 +32,10 @@ async def get_query_data(http_session: ClientSession, query_string, dest, limit,
                 else:
                     # logger.critical("response not ok")
                     continue
-        except (TypeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError) as e:
+        except (TypeError, asyncio.TimeoutError) as e:
             # logger.critical(f"ОШИБКА, {type(e)}")
+            continue
+        except client_exceptions.ServerDisconnectedError:
             counter -= 1
             continue
 
