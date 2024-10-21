@@ -172,10 +172,9 @@ async def get_city_result(city, date):
         while requests:
             await workers_queue.put(requests.pop())
         await workers_queue.put(None)
-        await asyncio.gather(*requests_tasks)
         await product_queue.put(None)
         await request_product_queue.put(None)
-        await asyncio.gather(request_product_save_task, product_save_task)
+        await asyncio.gather(*requests_tasks, request_product_save_task, product_save_task)
 #             logger.info(f"{city.name} BATCH {_}")
 #     logger.info(f"{city.name} complete")
 
