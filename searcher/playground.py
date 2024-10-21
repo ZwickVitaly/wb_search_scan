@@ -51,22 +51,16 @@ async def save_to_db(queue, model, update=False):
                         excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                            not col.primary_key}
                         primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
-                        refined_items = []
-                        seen = set()
-                        for item in items:
-                            if item.get(primary_fields[0]) not in seen:
-                                refined_items.append(item)
-                            seen.add(item.get(primary_fields[0]))
                     except Exception as e:
                         logger.critical(f"{e}")
                     try:
                         await session.execute(
-                            insert(model).values(refined_items).on_conflict_do_update(
+                            insert(model).values(items).on_conflict_do_update(
                                 index_elements=primary_fields,
                                 set_=excluded_fields
                             )
                         )
-                        logger.critical(f"УСПЕХ, {refined_items}")
+                        logger.critical(f"УСПЕХ, {items}")
                     except Exception as e:
                         logger.error(f"{e}")
                 await session.commit()
@@ -121,18 +115,23 @@ async def get_r_data(r, city, date, http_session, product_queue, request_product
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
-            products = [
-                {
-                    "wb_id": p.get("id"),
-                    "name": p.get("name"),
-                    "brand": p.get("brand"),
-                    "brandId": p.get("brandId"),
-                    "supplier": p.get("supplier"),
-                    "supplierId": p.get("supplierId"),
-                    "entity": p.get("entity"),
-                }
-                for p in full_res
-            ]
+            seen = set()
+            products = []
+            for p in full_res:
+                if p.get("id") not in seen:
+                    products.append(
+                        {
+                            "wb_id": p.get("id"),
+                            "name": p.get("name"),
+                            "brand": p.get("brand"),
+                            "brandId": p.get("brandId"),
+                            "supplier": p.get("supplier"),
+                            "supplierId": p.get("supplierId"),
+                            "entity": p.get("entity"),
+                        }
+                    )
+                seen.add(p.get("id"))
+            seen.clear()
             await product_queue.put(products)
             request_product = {
                 "city": city.id,
