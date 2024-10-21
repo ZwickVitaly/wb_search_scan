@@ -132,9 +132,9 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 #     seen.add(p.get("id"))
                 # seen.clear()
             async with aiopen("dump.bson", "ab") as aiofile:
-                json.dump(products, aiofile)
+                for prod in products:
+                    await aiofile.write(f"{json.dumps(prod, indent=2, ensure_ascii=False)},".encode())
             logger.critical("ПОЧТИ 2")
-            await product_queue.put(products)
             request_product = {
                 "city": city.id,
                 "query": r.query,
@@ -185,7 +185,8 @@ def run_pool_threads(func, *args, **kwargs):
     asyncio.run(func(*args, **kwargs))
 
 def get_results():
-    with open("dump.bson", "wb+"):
+    with open("dump.bson", "wb+") as file:
+        file.write("[\n")
         pass
     start = time.time()
     logger.info("Вход в программу")
