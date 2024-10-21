@@ -32,13 +32,12 @@ async def save_to_db(queue, model, update=False):
     while True:
         items = []
         item = None
-        while len(items) < 1000:
+        while len(items) < 10000:
             item = await queue.get()
             if item is None:
                 break
             if isinstance(item, list):
                 items.extend(item)
-                break
             else:
                 items.append(item)
             queue.task_done()
