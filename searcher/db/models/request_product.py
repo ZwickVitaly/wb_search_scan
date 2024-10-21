@@ -1,7 +1,8 @@
 from datetime import date
 
-from sqlalchemy import Integer, ForeignKey, Date, func, String, ARRAY
+from sqlalchemy import Integer, ForeignKey, Date, func, String
 from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from ..base import Base
 
