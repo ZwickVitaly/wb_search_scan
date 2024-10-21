@@ -38,6 +38,7 @@ async def save_to_db(queue, model, update=False):
                 break
             if isinstance(item, list):
                 items.extend(item)
+                break
             else:
                 items.append(item)
             queue.task_done()
