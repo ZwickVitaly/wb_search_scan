@@ -33,7 +33,6 @@ async def save_to_db(queue, model, update=False):
         items = []
         item = None
         while len(items) < 100:
-            logger.info(model)
             item = await queue.get()
             if item is None:
                 break
@@ -47,6 +46,7 @@ async def save_to_db(queue, model, update=False):
                 if not update:
                     await session.execute(insert(model).values(items))
                 else:
+                    logger.info(model)
                     stmt = insert(model).values(items)
                     excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                        not col.primary_key}
