@@ -1,10 +1,7 @@
 import asyncio
 import time
 from datetime import datetime
-from enum import unique
-from itertools import product
 from multiprocessing import Pool
-from token import AWAIT
 
 from aiohttp import ClientSession
 from sqlalchemy import select
@@ -156,9 +153,9 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
 #     logger.info(f"{city.name} start, {len(requests)}")
     product_queue = asyncio.Queue()
-    request_product_queue = asyncio.Queue()
-    workers_queue = asyncio.Queue()
-    product_save_task = [asyncio.create_task(save_to_db(product_queue, Product, update=True)) for _ in range(10)]
+    request_product_queue = asyncio.Queue(10)
+    workers_queue = asyncio.Queue(10)
+    product_save_task = [asyncio.create_task(save_to_db(product_queue, Product, update=True)) for _ in range(20)]
     request_product_save_task = [asyncio.create_task(save_to_db(request_product_queue, RequestProduct)) for _ in range(10)]
     async with ClientSession() as http_session:
         requests_tasks = [
@@ -201,6 +198,7 @@ def get_results():
             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
             for city in cities
         ]
+        p.apply_async()
         p.close()
         p.join()
     end = time.time()
