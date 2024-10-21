@@ -11,5 +11,8 @@ async def check():
         result = rqs.scalars()
     for r in result:
         logger.info(f"{r.query}")
+        for i, p in zip(r.positions, r.products):
+            if p == 79866056:
+                print(r.date, i)
 
 asyncio.run(check())
