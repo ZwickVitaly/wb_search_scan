@@ -10,7 +10,6 @@ async def check():
         rqs = await session.execute(select(RequestProduct).order_by(func.cardinality(RequestProduct.products).desc()).limit(10))
         result = rqs.scalars()
     for r in result:
-        if len(r.products) < 10:
-            logger.info(f"{r.query} - {r.products}")
+        logger.info(f"{r.query} - {r.products}")
 
 asyncio.run(check())
