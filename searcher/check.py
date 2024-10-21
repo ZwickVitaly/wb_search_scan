@@ -7,10 +7,9 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
-        rqs = await session.execute(select(RequestProduct))
+        rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([301392582])))
         result = rqs.scalars()
     for r in result:
-        if len(r.products) < 10:
-            logger.info(f"{r.query} - {r.products}")
+        print(r.query, r.date)
 
 asyncio.run(check())
