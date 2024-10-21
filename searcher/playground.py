@@ -45,6 +45,7 @@ async def save_to_db(queue, model, update=False):
             async with async_session_maker() as session:
                 if not update:
                     await session.execute(insert(model).values(items))
+                    logger.critical("УСПЕХ 1")
                 else:
                     # stmt = insert(model)
                     # excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
