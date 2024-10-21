@@ -35,7 +35,7 @@ async def get_query_data(http_session: ClientSession, query_string, dest, limit,
         except (ContentTypeError, TypeError, JSONDecodeError, client_exceptions.ServerDisconnectedError, asyncio.TimeoutError) as e:
             # logger.critical(f"ОШИБКА, {type(e)}")
             counter -= 1
-            timeout += 2
+            timeout += 0.5
             await asyncio.sleep(0.01)
             continue
 

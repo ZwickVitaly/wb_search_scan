@@ -105,7 +105,7 @@ async def get_city_result(city, date):
 #     logger.info(f"{city.name} start, {len(requests)}")
     logger.info("hi")
     db_queue = asyncio.Queue()
-    workers_queue = asyncio.Queue(maxsize=100)
+    workers_queue = asyncio.Queue(maxsize=50)
     logger.info("hi again")
     db_save_task = asyncio.create_task(save_to_db(db_queue))
     logger.info("bye?")
