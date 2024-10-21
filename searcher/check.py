@@ -16,18 +16,16 @@ async def check():
     ekat = {}
     vlad = {}
     for r in result:
-        print(r)
         for p, i in zip(r.products, r.positions):
-            print(p)
             if p == 79866056:
                 if r.city == 1:
-                    moscow[r.query] = {"date": r.date, "place": i}
+                    moscow[r.query] = {"date": str(r.date), "place": i}
                 elif r.city == 2:
-                    krasnodar[r.query] = {"date": r.date, "place": i}
+                    krasnodar[r.query] = {"date": str(r.date), "place": i}
                 elif r.city == 3:
-                    ekat[r.query] = {"date": r.date, "place": i}
+                    ekat[r.query] = {"date": str(r.date), "place": i}
                 elif r.city == 4:
-                    vlad[r.query] = {"date": r.date, "place": i}
+                    vlad[r.query] = {"date": str(r.date), "place": i}
     res = [moscow, krasnodar, ekat, vlad]
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
