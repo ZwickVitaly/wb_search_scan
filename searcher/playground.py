@@ -121,7 +121,7 @@ async def get_r_data(r, city, date, http_session, product_queue, request_product
                 }
                 for p in full_res
             ]
-            product_queue.put(products)
+            await product_queue.put(products)
             request_product = {
                 "city": city.id,
                 "query": r.query,
