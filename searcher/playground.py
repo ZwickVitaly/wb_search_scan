@@ -73,7 +73,7 @@ async def get_r_data(r, city, date, http_session, queue=None):
                         dest=city.dest,
                         limit=300,
                         page=i,
-                        rqa=5,
+                        rqa=4,
                         http_session=http_session,
                     )
                 ) for i in range(1,4)
@@ -105,7 +105,7 @@ async def get_city_result(city, date):
 #     logger.info(f"{city.name} start, {len(requests)}")
     logger.info("hi")
     db_queue = asyncio.Queue()
-    workers_queue = asyncio.Queue(maxsize=50)
+    workers_queue = asyncio.Queue(maxsize=30)
     logger.info("hi again")
     db_save_task = asyncio.create_task(save_to_db(db_queue))
     logger.info("bye?")
