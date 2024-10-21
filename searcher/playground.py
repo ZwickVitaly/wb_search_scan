@@ -56,7 +56,7 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
             limit=limit,
             page=page,
             rqa=rqa,
-            timeout=3
+            timeout=5
         )
     except ValueError:
         x = {"products": []}
@@ -105,7 +105,7 @@ async def get_city_result(city, date):
 #     logger.info(f"{city.name} start, {len(requests)}")
     logger.info("hi")
     db_queue = asyncio.Queue()
-    workers_queue = asyncio.Queue(maxsize=50)
+    workers_queue = asyncio.Queue(maxsize=10)
     logger.info("hi again")
     db_save_task = asyncio.create_task(save_to_db(db_queue))
     logger.info("bye?")
