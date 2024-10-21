@@ -45,6 +45,7 @@ async def save_to_db(queue):
 async def get_r_data_q(queue, city, date, http_session, db_queue):
     r = await queue.get()
     await get_r_data(r=r, city=city, date=date, http_session=http_session, queue=db_queue)
+    queue.task_done()
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
