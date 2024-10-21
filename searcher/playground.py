@@ -198,7 +198,6 @@ def get_results():
             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
             for city in cities
         ]
-        p.apply_async()
         p.close()
         p.join()
     end = time.time()
