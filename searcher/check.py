@@ -26,6 +26,10 @@ async def check(wb_id):
                     ekat[r.query] = i
                 elif r.city == 4:
                     vlad[r.query] = i
+    moscow = dict(sorted([(key, val) for key, val in moscow.items()], key=lambda x:x[1]))
+    krasnodar = dict(sorted([(key, val) for key, val in krasnodar.items()], key=lambda x:x[1]))
+    ekat = dict(sorted([(key, val) for key, val in ekat.items()], key=lambda x:x[1]))
+    vlad = dict(sorted([(key, val) for key, val in vlad.items()], key=lambda x:x[1]))
     res = [{"Москва":moscow}, {"Краснодар":krasnodar}, {"Екатеринбург":ekat}, {"Владивосток":vlad}]
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
