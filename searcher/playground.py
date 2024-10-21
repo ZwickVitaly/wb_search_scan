@@ -44,7 +44,6 @@ async def save_to_db(queue, model, update=False):
         if items:
             async with async_session_maker() as session:
                 if not update:
-                    logger.critical(f"Пытаемся: {items}")
                     await session.execute(insert(model).values(items))
                 else:
                     logger.critical(f"Пытаемся: {items}")
