@@ -143,7 +143,7 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
             await request_product_queue.put(request_product)
             return
         except Exception as e:
-#             logger.critical(f"{e}")
+            logger.critical(f"{e}")
             break
 
 async def get_city_result(city, date):
