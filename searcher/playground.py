@@ -47,11 +47,11 @@ async def save_to_db(queue, model, update=False):
                 if not update:
                     await session.execute(insert(model).values(items))
                 else:
-                    logger.info(model)
                     excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                        not col.primary_key}
                     primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
                     stmt = insert(model).values(items)
+                    logger.info(f"Пытаемся: {items}")
                     try:
                         await session.execute(
                             insert(model).values(items).on_conflict_do_update(
