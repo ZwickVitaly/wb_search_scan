@@ -33,7 +33,7 @@ async def save_to_db(queue, model, update=False):
     while True:
         items = []
         item = None
-        while len(items) < 3000:
+        while len(items) < 900:
             item = await queue.get()
             if item is None:
                 break
@@ -77,6 +77,7 @@ async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, product_q
             break
         await get_r_data(r=r, city=city, date=date, http_session=http_session, product_queue=product_queue, request_product_queue=request_product_queue)
         queue.task_done()
+        await asyncio.sleep(0.1)
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
