@@ -7,7 +7,7 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
-        rqs = await session.execute(select(RequestProduct).order_by(func.cardinality(RequestProduct.products).desc()).limit(10))
+        rqs = await session.execute(select(RequestProduct).filter(Request.products.contains([79866056])))
         result = rqs.scalars()
     for r in result:
         logger.info(f"{r.query} - {r.products}")
