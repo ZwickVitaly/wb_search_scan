@@ -73,7 +73,7 @@ async def get_r_data(r, city, date, http_session, queue=None):
                         dest=city.dest,
                         limit=300,
                         page=i,
-                        rqa=3,
+                        rqa=5,
                         http_session=http_session,
                     )
                 ) for i in range(1,4)
