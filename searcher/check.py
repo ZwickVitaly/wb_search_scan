@@ -26,7 +26,7 @@ async def check():
                     ekat[r.query] = {"date": str(r.date), "place": i}
                 elif r.city == 4:
                     vlad[r.query] = {"date": str(r.date), "place": i}
-    res = [moscow, krasnodar, ekat, vlad]
+    res = [{"Москва":moscow}, {"Краснодар":krasnodar}, {"Екатеринбург":ekat}, {"Владивосток":vlad}]
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
 
