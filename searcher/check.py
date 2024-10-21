@@ -18,6 +18,7 @@ async def check():
     for r in result:
         print(r)
         for i, p in zip(r.products, r.positions):
+            print(p)
             if p == 79866056:
                 if r.city == 1:
                     moscow[r.query] = {"date": r.date, "place": i}
