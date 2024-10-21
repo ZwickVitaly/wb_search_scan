@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import unique
 from itertools import product
 from multiprocessing import Pool
+from token import AWAIT
 
 from aiohttp import ClientSession
 from sqlalchemy import select
@@ -145,6 +146,7 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
             }
             await request_product_queue.put(request_product)
             logger.critical("ПОЧТИ 3")
+            await asyncio.sleep(1)
             return
         except Exception as e:
             logger.critical(f"{e}")
