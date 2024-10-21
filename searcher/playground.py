@@ -21,7 +21,7 @@ async def get_cities_data():
 
 async def get_requests_data():
     async with async_session_maker() as s:
-        q = await s.execute(select(Request).order_by(Request.quantity.desc()))
+        q = await s.execute(select(Request).order_by(Request.quantity.desc()).limit(10000))
         requests = q.scalars()
     return requests
 
@@ -34,6 +34,7 @@ async def save_to_db(queue):
             if item is None:
                 break
             items.append(item)
+            queue.task_done()
         if items:
             async with async_session_maker() as session:
                 session.add_all(items)
