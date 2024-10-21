@@ -47,6 +47,7 @@ async def save_to_db(queue, model, update=False):
                     logger.critical(f"Пытаемся: {items}")
                     await session.execute(insert(model).values(items))
                 else:
+                    logger.critical(f"Пытаемся: {items}")
                     excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                        not col.primary_key}
                     primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
