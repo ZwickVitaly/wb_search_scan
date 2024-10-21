@@ -1,8 +1,9 @@
 import asyncio
+import json
 import time
 from datetime import datetime
 from multiprocessing import Pool
-
+from aiofiles import open as aiopen
 from aiohttp import ClientSession
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -130,6 +131,8 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 )
                 #     seen.add(p.get("id"))
                 # seen.clear()
+            async with aiopen("dump.bson", "ab") as aiofile:
+                json.dump(products, aiofile)
             logger.critical("ПОЧТИ 2")
             await product_queue.put(products)
             request_product = {
@@ -182,6 +185,8 @@ def run_pool_threads(func, *args, **kwargs):
     asyncio.run(func(*args, **kwargs))
 
 def get_results():
+    with open("dump.bson", "wb+"):
+        pass
     start = time.time()
     logger.info("Вход в программу")
     today = datetime.now().date()
