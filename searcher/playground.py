@@ -113,6 +113,7 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
+            logger.critical("ПОЧТИ")
             if product_queue:
                 # seen = set()
                 products = []
