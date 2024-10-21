@@ -38,6 +38,7 @@ async def save_to_db(queue, model, update=False):
                 break
             if isinstance(item, list):
                 items.extend(item)
+                break
             else:
                 items.append(item)
             queue.task_done()
@@ -50,8 +51,8 @@ async def save_to_db(queue, model, update=False):
                     excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                        not col.primary_key}
                     primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
-                    purified_items = [item for item in items if item.get(primary_fields[0]) not in purified_items]
-                    stmt = insert(model).values([purified_items])
+                    purified_items = [item for item in items if item.get(primary_fields[0]) not in [q.get(primary_fields[0]) for q in purified_items]]
+                    stmt = insert(model).values(purified_items)
                     try:
                         await session.execute(
                             insert(model).values(items).on_conflict_do_update(
