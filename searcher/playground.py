@@ -114,35 +114,33 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
             if not full_res:
                 full_res = []
             logger.critical("ПОЧТИ")
-            if product_queue:
-                # seen = set()
-                products = []
-                for p in full_res:
-                    # if p.get("id") not in seen:
-                    products.append(
-                        {
-                            "wb_id": p.get("id"),
-                            "name": p.get("name"),
-                            "brand": p.get("brand"),
-                            "brandId": p.get("brandId"),
-                            "supplier": p.get("supplier"),
-                            "supplierId": p.get("supplierId"),
-                            "entity": p.get("entity"),
-                        }
-                    )
+            # seen = set()
+            products = []
+            for p in full_res:
+                # if p.get("id") not in seen:
+                products.append(
+                    {
+                        "wb_id": p.get("id"),
+                        "name": p.get("name"),
+                        "brand": p.get("brand"),
+                        "brandId": p.get("brandId"),
+                        "supplier": p.get("supplier"),
+                        "supplierId": p.get("supplierId"),
+                        "entity": p.get("entity"),
+                    }
+                )
                 #     seen.add(p.get("id"))
                 # seen.clear()
-                await product_queue.put(products)
-            if request_product_queue:
-                request_product = {
-                    "city": city.id,
-                    "query": r.query,
-                    "products": [p.get("id") for p in full_res],
-                    "positions": [i for i in range(1, len(full_res) + 1)],
-                    "natural_positions": [p.get("log", {}).get("position", 0) for p in full_res],
-                    "date": date
-                }
-                await request_product_queue.put(request_product)
+            await product_queue.put(products)
+            request_product = {
+                "city": city.id,
+                "query": r.query,
+                "products": [p.get("id") for p in full_res],
+                "positions": [i for i in range(1, len(full_res) + 1)],
+                "natural_positions": [p.get("log", {}).get("position", 0) for p in full_res],
+                "date": date
+            }
+            await request_product_queue.put(request_product)
             return
         except Exception as e:
 #             logger.critical(f"{e}")
