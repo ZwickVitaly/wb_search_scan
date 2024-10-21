@@ -50,7 +50,7 @@ async def save_to_db(queue, model, update=False):
                                        not col.primary_key}
                     primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
                     stmt = insert(model).values(items)
-                    logger.info(f"Пытаемся: {items}")
+                    logger.critical(f"Пытаемся: {items}")
                     try:
                         await session.execute(
                             insert(model).values(items).on_conflict_do_update(
