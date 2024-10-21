@@ -186,7 +186,7 @@ def run_pool_threads(func, *args, **kwargs):
 
 def get_results():
     with open("dump.bson", "wb+") as file:
-        file.write("[\n")
+        file.write(b"[\n")
         pass
     start = time.time()
     logger.info("Вход в программу")
