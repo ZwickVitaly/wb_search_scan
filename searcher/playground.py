@@ -43,7 +43,6 @@ async def save_to_db(queue):
 
 
 async def get_r_data_q(queue, city, date, http_session, db_queue):
-    logger.info("das;ldj;asl")
     r = await queue.get()
     await get_r_data(r=r, city=city, date=date, http_session=http_session, queue=db_queue)
 
