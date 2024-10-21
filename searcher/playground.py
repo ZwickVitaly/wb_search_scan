@@ -70,7 +70,7 @@ async def save_to_db(queue, model, update=False):
 
 
 
-async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, product_queue, request_product_queue):
+async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, product_queue=None, request_product_queue=None):
     while True:
         r = await queue.get()
         if r is None:
@@ -94,7 +94,7 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
         x = {"products": []}
     return x
 
-async def get_r_data(r, city, date, http_session, product_queue, request_product_queue):
+async def get_r_data(r, city, date, http_session, product_queue=None, request_product_queue=None):
     while True:
         try:
             full_res = []
@@ -115,33 +115,35 @@ async def get_r_data(r, city, date, http_session, product_queue, request_product
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
-            seen = set()
-            products = []
-            for p in full_res:
-                if p.get("id") not in seen:
-                    products.append(
-                        {
-                            "wb_id": p.get("id"),
-                            "name": p.get("name"),
-                            "brand": p.get("brand"),
-                            "brandId": p.get("brandId"),
-                            "supplier": p.get("supplier"),
-                            "supplierId": p.get("supplierId"),
-                            "entity": p.get("entity"),
-                        }
-                    )
-                seen.add(p.get("id"))
-            seen.clear()
-            await product_queue.put(products)
-            request_product = {
-                "city": city.id,
-                "query": r.query,
-                "products": [p.get("id") for p in full_res],
-                "positions": [i for i in range(1, len(full_res) + 1)],
-                "natural_positions": [p.get("log", {}).get("position", 0) for p in full_res],
-                "date": date
-            }
-            await request_product_queue.put(request_product)
+            if product_queue:
+                seen = set()
+                products = []
+                for p in full_res:
+                    if p.get("id") not in seen:
+                        products.append(
+                            {
+                                "wb_id": p.get("id"),
+                                "name": p.get("name"),
+                                "brand": p.get("brand"),
+                                "brandId": p.get("brandId"),
+                                "supplier": p.get("supplier"),
+                                "supplierId": p.get("supplierId"),
+                                "entity": p.get("entity"),
+                            }
+                        )
+                    seen.add(p.get("id"))
+                seen.clear()
+                await product_queue.put(products)
+            if request_product_queue:
+                request_product = {
+                    "city": city.id,
+                    "query": r.query,
+                    "products": [p.get("id") for p in full_res],
+                    "positions": [i for i in range(1, len(full_res) + 1)],
+                    "natural_positions": [p.get("log", {}).get("position", 0) for p in full_res],
+                    "date": date
+                }
+                await request_product_queue.put(request_product)
             return
         except Exception as e:
 #             logger.critical(f"{e}")
@@ -150,10 +152,10 @@ async def get_r_data(r, city, date, http_session, product_queue, request_product
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
 #     logger.info(f"{city.name} start, {len(requests)}")
-    product_queue = asyncio.Queue()
+#     product_queue = asyncio.Queue()
     request_product_queue = asyncio.Queue()
     workers_queue = asyncio.Queue()
-    product_save_task = [asyncio.create_task(save_to_db(product_queue, Product, update=True)) for _ in range(5)]
+    # product_save_task = [asyncio.create_task(save_to_db(product_queue, Product, update=True)) for _ in range(5)]
     request_product_save_task = [asyncio.create_task(save_to_db(request_product_queue, RequestProduct)) for _ in range(5)]
     async with ClientSession() as http_session:
         requests_tasks = [
@@ -163,7 +165,7 @@ async def get_city_result(city, date):
                     city=city,
                     date=date,
                     http_session=http_session,
-                    product_queue=product_queue,
+                    # product_queue=product_queue,
                     request_product_queue=request_product_queue
                 )
             ) for _ in range(20)
@@ -172,9 +174,9 @@ async def get_city_result(city, date):
             await workers_queue.put(requests.pop())
         await workers_queue.put(None)
         await asyncio.gather(*requests_tasks)
-        await product_queue.put(None)
+        # await product_queue.put(None)
         await request_product_queue.put(None)
-        await asyncio.gather(*request_product_save_task, *product_save_task)
+        await asyncio.gather(*request_product_save_task)
 #             logger.info(f"{city.name} BATCH {_}")
 #     logger.info(f"{city.name} complete")
 
