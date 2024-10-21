@@ -2,7 +2,7 @@ import json
 
 from sqlalchemy import select, func
 import asyncio
-from db import RequestProduct, Request
+from db import RequestProduct, Request, Product
 from db.base import async_session_maker
 from settings import logger
 
@@ -31,6 +31,12 @@ async def check(wb_id):
     ekat = dict(sorted([(key, val) for key, val in ekat.items()], key=lambda x:x[1]))
     vlad = dict(sorted([(key, val) for key, val in vlad.items()], key=lambda x:x[1]))
     res = [{"Москва":moscow}, {"Краснодар":krasnodar}, {"Екатеринбург":ekat}, {"Владивосток":vlad}]
+    print(json.dumps(res, indent=2, ensure_ascii=False))
+
+    async with async_session_maker() as session:
+        rqs = await session.execute(select(Product).limit(10))
+        result = rqs.scalars()
+    res = [(p.wb_id, p.name) for p in result]
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
 
