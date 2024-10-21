@@ -75,7 +75,6 @@ async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, product_q
             break
         await get_r_data(r=r, city=city, date=date, http_session=http_session, product_queue=product_queue, request_product_queue=request_product_queue)
         queue.task_done()
-        await asyncio.sleep(0.1)
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
@@ -142,8 +141,6 @@ async def get_r_data(r, city, date, http_session, product_queue=None, request_pr
                 "date": date
             }
             await request_product_queue.put(request_product)
-            logger.critical("ПОЧТИ 3")
-            await asyncio.sleep(1)
             return
         except Exception as e:
             logger.critical(f"{e}")
