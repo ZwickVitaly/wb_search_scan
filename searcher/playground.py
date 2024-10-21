@@ -24,7 +24,7 @@ async def get_cities_data():
 
 async def get_requests_data():
     async with async_session_maker() as s:
-        q = await s.execute(select(Request).order_by(Request.quantity.desc()).limit(10000))
+        q = await s.execute(select(Request).order_by(Request.quantity.desc()).limit(100))
         requests = q.scalars()
     return requests
 
