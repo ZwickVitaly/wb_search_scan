@@ -142,8 +142,8 @@ async def get_city_result(city, date):
     product_queue = asyncio.Queue()
     request_product_queue = asyncio.Queue()
     workers_queue = asyncio.Queue()
-    product_save_task = asyncio.create_task(save_to_db(request_product_queue, Product))
-    request_product_save_task = asyncio.create_task(save_to_db(request_product_queue, RequestProduct, update=True))
+    product_save_task = asyncio.create_task(save_to_db(request_product_queue, Product, update=True))
+    request_product_save_task = asyncio.create_task(save_to_db(request_product_queue, RequestProduct))
     async with ClientSession() as http_session:
         requests_tasks = [
             asyncio.create_task(
