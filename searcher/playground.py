@@ -108,6 +108,7 @@ async def get_city_result(city, date):
     async with ClientSession() as http_session:
         requests_tasks = [get_r_data_q(queue=workers_queue, city=city, date=date, http_session=http_session, db_queue=db_queue) for _ in len(requests)]
         while requests:
+            logger.info("putting")
             await workers_queue.put(requests.pop())
         await asyncio.gather(*requests_tasks)
         await db_queue.put(None)
