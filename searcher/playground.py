@@ -43,10 +43,13 @@ async def save_to_db(queue):
             break
 
 
-async def get_r_data_q(queue, city, date, http_session, db_queue):
-    r = await queue.get()
-    await get_r_data(r=r, city=city, date=date, http_session=http_session, queue=db_queue)
-    queue.task_done()
+async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, db_queue):
+    while True:
+        r = await queue.get()
+        if r is None:
+            break
+        await get_r_data(r=r, city=city, date=date, http_session=http_session, queue=db_queue)
+        queue.task_done()
 
 async def try_except_query_data(query_string, dest, limit, page, http_session, rqa=5):
     try:
@@ -105,10 +108,10 @@ async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
 #     logger.info(f"{city.name} start, {len(requests)}")
     db_queue = asyncio.Queue()
-    workers_queue = asyncio.Queue(maxsize=20)
+    workers_queue = asyncio.Queue()
     db_save_task = asyncio.create_task(save_to_db(db_queue))
     async with ClientSession() as http_session:
-        requests_tasks = [asyncio.create_task(get_r_data_q(queue=workers_queue, city=city, date=date, http_session=http_session, db_queue=db_queue)) for _ in range(len(requests))]
+        requests_tasks = [asyncio.create_task(get_r_data_q(queue=workers_queue, city=city, date=date, http_session=http_session, db_queue=db_queue)) for _ in range(20)]
         while requests:
             await workers_queue.put(requests.pop())
         await asyncio.gather(*requests_tasks)
