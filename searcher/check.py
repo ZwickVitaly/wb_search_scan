@@ -7,9 +7,9 @@ from db.base import async_session_maker
 from settings import logger
 
 
-async def check():
+async def check(wb_id):
     async with async_session_maker() as session:
-        rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([79866056])))
+        rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([wb_id])))
         result = rqs.scalars()
     moscow = {}
     krasnodar = {}
@@ -17,7 +17,7 @@ async def check():
     vlad = {}
     for r in result:
         for p, i in zip(r.products, r.positions):
-            if p == 79866056:
+            if p == wb_id:
                 if r.city == 1:
                     moscow[r.query] = {"date": str(r.date), "place": i}
                 elif r.city == 2:
@@ -30,4 +30,4 @@ async def check():
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
 
-asyncio.run(check())
+asyncio.run(check(259217369))
