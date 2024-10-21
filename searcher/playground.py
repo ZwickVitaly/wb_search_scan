@@ -33,6 +33,7 @@ async def save_to_db(queue, model, update=False):
         items = []
         item = None
         while len(items) < 100:
+            logger.info(model)
             item = await queue.get()
             if item is None:
                 break
@@ -142,7 +143,7 @@ async def get_city_result(city, date):
     request_product_queue = asyncio.Queue()
     workers_queue = asyncio.Queue()
     product_save_task = asyncio.create_task(save_to_db(request_product_queue, Product))
-    request_product_save_task = asyncio.create_task(save_to_db(request_product_queue, RequestProduct))
+    request_product_save_task = asyncio.create_task(save_to_db(request_product_queue, RequestProduct, update=True))
     async with ClientSession() as http_session:
         requests_tasks = [
             asyncio.create_task(
