@@ -34,4 +34,4 @@ async def check(wb_id):
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
 
-asyncio.run(check(259217369))
+asyncio.run(check(181082581))
