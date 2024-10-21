@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import select, func
 import asyncio
 from db import RequestProduct, Request
@@ -9,10 +11,23 @@ async def check():
     async with async_session_maker() as session:
         rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([79866056])))
         result = rqs.scalars()
+    moscow = {}
+    krasnodar = {}
+    ekat = {}
+    vlad = {}
     for r in result:
-        logger.info(f"{r.query}")
-        for i, p in zip(r.positions, r.products):
+        for i, p in zip(r.products, r.positions):
             if p == 79866056:
-                print(r.date, i)
+                if r.city == 1:
+                    moscow[r.query] = {"date": r.date, "place": i}
+                elif r.city == 2:
+                    krasnodar[r.query] = {"date": r.date, "place": i}
+                elif r.city == 3:
+                    ekat[r.query] = {"date": r.date, "place": i}
+                elif r.city == 4:
+                    vlad[r.query] = {"date": r.date, "place": i}
+    res = [moscow, krasnodar, ekat, vlad]
+    print(json.dumps(res, indent=2, ensure_ascii=False))
+
 
 asyncio.run(check())
