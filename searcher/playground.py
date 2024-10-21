@@ -88,7 +88,7 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
             limit=limit,
             page=page,
             rqa=rqa,
-            timeout=5
+            timeout=10
         )
     except ValueError:
         x = {"products": []}
