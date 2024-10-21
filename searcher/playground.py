@@ -103,10 +103,14 @@ async def get_r_data(r, city, date, http_session, queue=None):
 async def get_city_result(city, date):
     requests = [r for r in await get_requests_data() if not r.query.isdigit()]
 #     logger.info(f"{city.name} start, {len(requests)}")
+    logger.info("hi")
     db_queue = asyncio.Queue()
     workers_queue = asyncio.Queue(maxsize=100)
+    logger.info("hi again")
     db_save_task = asyncio.create_task(save_to_db(db_queue))
+    logger.info("bye?")
     async with ClientSession() as http_session:
+        logger.info("what?")
         requests_tasks = [get_r_data_q(queue=workers_queue, city=city, date=date, http_session=http_session, db_queue=db_queue) for _ in len(requests)]
         while requests:
             logger.info("putting")
