@@ -10,6 +10,6 @@ async def check():
         rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([63730820])))
         result = rqs.scalars()
     for r in result:
-        print(r.query, r.date)
+        print(r.query, r.date, r.city)
 
 asyncio.run(check())
