@@ -16,6 +16,7 @@ async def check():
     ekat = {}
     vlad = {}
     for r in result:
+        print(r)
         for i, p in zip(r.products, r.positions):
             if p == 79866056:
                 if r.city == 1:
