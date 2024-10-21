@@ -53,7 +53,6 @@ async def save_to_db(queue, model, update=False):
                         stmt = insert(model).values(items)
                     except Exception as e:
                         logger.critical(f"{e}")
-                    logger.critical(f"Пытаемся: {items}")
                     try:
                         await session.execute(
                             insert(model).values(items).on_conflict_do_update(
