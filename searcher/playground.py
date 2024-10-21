@@ -51,12 +51,15 @@ async def save_to_db(queue, model, update=False):
                     excluded_fields = {col.name: stmt.excluded[col.name] for col in model.__table__.columns if
                                        not col.primary_key}
                     primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
-                    await session.execute(
-                        insert(model).values(items).on_conflict_do_update(
-                            index_elements=primary_fields,
-                            set_=excluded_fields
+                    try:
+                        await session.execute(
+                            insert(model).values(items).on_conflict_do_update(
+                                index_elements=primary_fields,
+                                set_=excluded_fields
+                            )
                         )
-                    )
+                    except Exception as e:
+                        logger.error(f"{e}")
                 await session.commit()
         if item is None:
             break
