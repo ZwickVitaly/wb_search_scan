@@ -167,3 +167,6 @@ async def get_results():
         f"Завершение парса: {end_time.strftime('%H:%M %d.%m.%Y')}\n"
         f"Выполнено за: {delta // 60 // 60} часов, {delta // 60} минут"
     )
+
+
+asyncio.run(get_results())
