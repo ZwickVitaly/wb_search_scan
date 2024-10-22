@@ -9,35 +9,11 @@ from settings import logger
 
 async def check(wb_id):
     async with async_session_maker() as session:
-        rqs = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([wb_id])))
+        rqs = await session.execute(select(RequestProduct))
         result = rqs.scalars()
-    moscow = dict()
-    krasnodar = dict()
-    ekat = dict()
-    vlad = dict()
+    id_set = set()
     for r in result:
-        for p, i in zip(r.products, r.positions):
-            if p == wb_id:
-                if r.city == 1:
-                    moscow[r.query] = i
-                elif r.city == 2:
-                    krasnodar[r.query] = i
-                elif r.city == 3:
-                    ekat[r.query] = i
-                elif r.city == 4:
-                    vlad[r.query] = i
-    moscow = dict(sorted([(key, val) for key, val in moscow.items()], key=lambda x:x[1]))
-    krasnodar = dict(sorted([(key, val) for key, val in krasnodar.items()], key=lambda x:x[1]))
-    ekat = dict(sorted([(key, val) for key, val in ekat.items()], key=lambda x:x[1]))
-    vlad = dict(sorted([(key, val) for key, val in vlad.items()], key=lambda x:x[1]))
-    res = [{"Москва":moscow}, {"Краснодар":krasnodar}, {"Екатеринбург":ekat}, {"Владивосток":vlad}]
-    print(json.dumps(res, indent=2, ensure_ascii=False))
-
-    async with async_session_maker() as session:
-        rqs = await session.execute(select(Product).limit(10))
-        result = rqs.scalars()
-    res = [(p.wb_id, p.name) for p in result]
-    print(json.dumps(res, indent=2, ensure_ascii=False))
-
-
-asyncio.run(check(258071677))
+        id_set.update(r.products)
+    id_set = list(id_set)
+    with open("products.bson", "wb+") as file:
+        json.dump(id_set, file, indent=2, ensure_ascii=False)

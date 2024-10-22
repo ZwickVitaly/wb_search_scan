@@ -1,7 +1,7 @@
 import asyncio
 from json import JSONDecodeError
 
-from aiohttp import ClientSession, ContentTypeError, client_exceptions, ClientTimeout
+from aiohttp import ClientSession, ContentTypeError, client_exceptions
 
 from settings import SEARCH_URL, logger
 
