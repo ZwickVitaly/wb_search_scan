@@ -9,7 +9,7 @@ from settings import logger
 
 async def check():
     prev = 0
-    for i in range(0, 4000000, 10000):
+    for i in range(0, 4000000, 1000):
         id_set = set()
         async with async_session_maker() as session:
             res = await session.execute(select(RequestProduct).offset(prev).limit(i))
