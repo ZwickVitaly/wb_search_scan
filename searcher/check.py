@@ -8,13 +8,14 @@ from settings import logger
 
 
 async def check():
-    async with async_session_maker() as session:
-        rqs = await session.execute(select(RequestProduct))
-        result = rqs.scalars()
     id_set = set()
-    for r in result:
-        id_set.update(r.products)
-    id_set = list(id_set)
+    prev = 0
+    for i in range(0, 4000000, 10000):
+        async with async_session_maker() as session:
+            res = await session.execute(select(RequestProduct).offset(prev).limit(i))
+            res = res.scalars()
+            for r in res:
+                id_set.update(r.products)
     with open("products.bson", "wb+") as file:
         json.dump(id_set, file, indent=2, ensure_ascii=False)
 
