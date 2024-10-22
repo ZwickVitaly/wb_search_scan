@@ -17,6 +17,6 @@ async def check():
             for r in res:
                 id_set.update(r.products)
             with open("products.bson", "ab+") as file:
-                file.write(f"{json.dumps(list(id_set), indent=2)}".encode())
+                file.write(f"{json.dumps(list(id_set))}\n".encode())
 
 asyncio.run(check())
