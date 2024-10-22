@@ -7,7 +7,7 @@ from db.base import async_session_maker
 from settings import logger
 
 
-async def check(wb_id):
+async def check():
     async with async_session_maker() as session:
         rqs = await session.execute(select(RequestProduct))
         result = rqs.scalars()
@@ -17,3 +17,5 @@ async def check(wb_id):
     id_set = list(id_set)
     with open("products.bson", "wb+") as file:
         json.dump(id_set, file, indent=2, ensure_ascii=False)
+
+asyncio.run(check())
