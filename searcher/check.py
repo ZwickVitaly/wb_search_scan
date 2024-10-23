@@ -8,18 +8,12 @@ from db.base import async_session_maker
 from settings import logger
 
 
-async def check():
+async def check(wb_id):
     async with async_session_maker() as session:
-        subquery = (
-            select(func.unnest(RequestProduct.products).label('value'))
-            .distinct()
-            .subquery()
-        )
-
-        # Запрос для подсчета уникальных значений
-        result = await session.execute(select(func.count(subquery.c.value)))
-        unique_count = result.scalar()
-    logger.info(unique_count)
+        result = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([wb_id])))
+        scal = result.scalars()
+    for s in scal:
+        logger.info(s.query, s.products.index(wb_id))
 
 
-asyncio.run(check())
+asyncio.run(check(76280452))
