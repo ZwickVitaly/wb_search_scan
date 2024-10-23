@@ -23,16 +23,35 @@ services:
 
   searcher:
     build:
-      dockerfile: Dockerfile_Searcher
+      dockerfile: Dockerfile
     container_name: wb_searcher
     env_file:
       - .env
     volumes:
-      - ./logs:/app_data/logs
+      - ./logs:/app_data/logs/searcher
     depends_on:
       db:
         condition: service_healthy
 
+#  redis:
+#    image: redis:alpine
+#
+#  celery:
+#    build: .
+#    entrypoint: celery -A tasks.celery_app worker --loglevel=info
+#    volumes:
+#      - ./logs:/app_data/logs/celery
+#    depends_on:
+#      - redis
+#
+#  celery-beat:
+#    build: .
+#    entrypoint: celery -A tasks.celery_app beat --loglevel=info
+#    volumes:
+#      - ./logs:/app_data/logs/celery_beat
+#    depends_on:
+#        - redis
+#
 
 networks:
   wb_search:
