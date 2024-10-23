@@ -10,10 +10,10 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
-        result = await session.execute(select(City))
+        result = await session.execute(select(Request))
         scal = result.scalars()
     for c in scal:
-        print(c.name)
+        print(c.query)
     # for s in scal:
     #     logger.info(f"{s.query}, {s.products.index(wb_id)}")
 
