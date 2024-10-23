@@ -1,8 +1,5 @@
 from asyncio import TaskGroup
 from datetime import datetime
-
-from sqlalchemy import delete
-
 from db import Request
 from db.base import async_session_maker
 from settings import logger, TIMEZONE
@@ -20,7 +17,7 @@ async def upload_requests_worker(requests_slice, now_date):
         await session.commit()
 
 
-async def upload_requests_csv_bg(requests_data: list[list[str|int]]):
+async def upload_requests_csv_bg(requests_data: list[dict]):
     logger.info("Uploading requests data")
     now_date = datetime.now(TIMEZONE).date()
     async with TaskGroup() as tg:
