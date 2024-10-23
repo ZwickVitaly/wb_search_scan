@@ -13,7 +13,7 @@ async def prepare_csv_contents(contents: list[str]):
             else:
                 row_values = row.strip().split(",", 1)
                 row_values[1] = int(row_values[1])
-            requests_data.append(row_values)
+            requests_data.append({"query": row_values[0], "quantity": row_values[1]})
         except (ValueError, TypeError, IndexError):
             error_rows.append(row)
     return requests_data, error_rows
