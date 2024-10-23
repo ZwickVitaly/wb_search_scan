@@ -3,19 +3,23 @@ import json
 from sqlalchemy import select, func
 from sqlalchemy.dialects.postgresql import array_agg
 import asyncio
-from db import RequestProduct, Request, Product, City
+from db import RequestProduct, Request, Product
 from db.base import async_session_maker
 from settings import logger
 
 
 async def check():
     async with async_session_maker() as session:
-        result = await session.execute(select(Request))
-        scal = result.scalars()
-    for c in scal:
-        print(c.query)
-    # for s in scal:
-    #     logger.info(f"{s.query}, {s.products.index(wb_id)}")
+        subquery = (
+            select(func.unnest(RequestProduct.products).filter(RequestProduct.city == 1).label('value'))
+            .distinct()
+            .subquery()
+        )
+
+        # Запрос для подсчета уникальных значений
+        result = await session.execute(select(func.count(subquery.c.value)))
+        unique_count = result.scalar()
+    logger.info(unique_count)
 
 
 asyncio.run(check())
