@@ -28,7 +28,7 @@ async def check():
         )
 
         # Запрос для подсчета уникальных значений
-        result = await session.execute(select(func.count()).select_from(RequestProduct))
+        result = await session.execute(select(func.count()).select_from(RequestProduct).where(RequestProduct.city == 1))
         reqs = result.scalar()
     logger.info(unique_count // reqs)
 
