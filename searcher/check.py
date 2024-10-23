@@ -12,6 +12,7 @@ async def check():
     async with async_session_maker() as session:
         subquery = (
             select(func.unnest(RequestProduct.products).label('value'))
+            .order_by("value")
             .distinct()
             .subquery()
         )
