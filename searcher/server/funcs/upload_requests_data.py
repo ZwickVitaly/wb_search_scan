@@ -7,9 +7,15 @@ from db.base import async_session_maker
 from settings import logger, TIMEZONE
 
 
+
+async def upload_requests_worker(request, now_date):
+
+
+
 async def upload_requests_csv_bg(requests_data: list[list[str|int]]):
     logger.info("Uploading requests data")
     now_date = datetime.now(TIMEZONE).date()
+
     async with async_session_maker() as session:
         logger.info("Start of DB renewal")
         for row in requests_data:
