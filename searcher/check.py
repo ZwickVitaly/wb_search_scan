@@ -13,7 +13,7 @@ async def check(wb_id):
         result = await session.execute(select(RequestProduct).filter(RequestProduct.products.contains([wb_id])))
         scal = result.scalars()
     for s in scal:
-        logger.info(s.query, s.products.index(wb_id))
+        logger.info(f"{s.query}, {s.products.index(wb_id)}")
 
 
 asyncio.run(check(76280452))
