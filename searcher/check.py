@@ -11,7 +11,7 @@ from settings import logger
 async def check():
     async with async_session_maker() as session:
         subquery = (
-            select(func.unnest(RequestProduct.values).label('value'))
+            select(func.unnest(RequestProduct.products).label('value'))
             .distinct()
             .subquery()
         )
