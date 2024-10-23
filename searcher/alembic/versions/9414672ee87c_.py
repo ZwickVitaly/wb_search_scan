@@ -1,4 +1,4 @@
-"""empty message
+"""added index on request_product.products
 
 Revision ID: 9414672ee87c
 Revises: c226e3e633d2
