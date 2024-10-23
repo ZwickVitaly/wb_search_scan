@@ -11,7 +11,6 @@ async def get_query_data(http_session: ClientSession, query_string, dest, limit,
     counter = 0
     while len(_data.get("data", {}).get("products", [])) < 2 and counter < rqa:
         counter += 1
-        logger.info(f"{counter} -> {query_string}")
         try:
             async with http_session.get(
                 url=SEARCH_URL,

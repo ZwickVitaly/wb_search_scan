@@ -104,6 +104,9 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
+            for res in full_res:
+                if res.get("log"):
+                    logger.info(f"{res.get('log')}")
             request_product = {
                 "city": city.id,
                 "query": r.query,
