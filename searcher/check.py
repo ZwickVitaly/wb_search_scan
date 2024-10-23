@@ -10,9 +10,16 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
-        res = await session.execute(select(func.sum(func.array_length(RequestProduct.products, 1))))
-        res = res.scalar()
-    logger.info(res)
+        subquery = (
+            select(func.unnest(RequestProduct.values).label('value'))
+            .distinct()
+            .subquery()
+        )
+
+        # Запрос для подсчета уникальных значений
+        result = await session.execute(select(func.count(subquery.c.value)))
+        unique_count = result.scalar()
+    logger.info(unique_count)
 
 
 asyncio.run(check())
