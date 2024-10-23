@@ -18,7 +18,7 @@ counter_other = 0
 
 async def get_cities_data():
     async with async_session_maker() as s:
-        q = await s.execute(select(City))
+        q = await s.execute(select(City).limit(1))
         cities = q.scalars()
     return cities
 
