@@ -10,6 +10,10 @@ from db.base import async_session_maker
 from db import City, Request, RequestProduct
 from settings import logger
 
+counter_a = 0
+counter_b = 0
+counter_c = 0
+counter_other = 0
 
 
 async def get_cities_data():
@@ -84,6 +88,7 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
     return x
 
 async def get_r_data(r, city, date, http_session, request_product_queue=None):
+    global counter_a, counter_b, counter_c, counter_other
     while True:
         try:
             full_res = []
@@ -104,21 +109,17 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
-            counter_a = 0
-            counter_b = 0
-            counter_c = 0
-            counter_other = 0
             for res in full_res:
-                if res.get("log", {}).get("tp") == "a" and counter_a == 0:
+                if res.get("log", {}).get("tp") == "a" and counter_a <= 5:
                     logger.info(f"{res.get("name")}{res.get('log')}")
                     counter_a += 1
-                elif res.get("log", {}).get("tp") == "b" and counter_b == 0:
+                elif res.get("log", {}).get("tp") == "b" and counter_b <= 5:
                     logger.info(f"{res.get("name")}{res.get('log')}")
                     counter_b += 1
-                elif res.get("log", {}).get("tp") == "c" and counter_c == 0:
+                elif res.get("log", {}).get("tp") == "c" and counter_c <= 5:
                     logger.info(f"{res.get("name")}{res.get('log')}")
                     counter_c += 1
-                elif res.get("log", {}).get("tp") and counter_other == 0:
+                elif res.get("log", {}).get("tp") and counter_other <= 5:
                     logger.info(f"{res.get("name")}{res.get('log')}")
                     counter_other += 1
             request_product = {
