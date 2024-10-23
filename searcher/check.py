@@ -10,15 +10,26 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
-        subquery = (
-            select(func.unnest(RequestProduct.products).label('value'))
-            .where(RequestProduct.city == 1)
-            .distinct()
-            .subquery()
-        )
+        # subquery = (
+        #     select(func.unnest(RequestProduct.products).label('value'))
+        #     .where(RequestProduct.city == 1)
+        #     .distinct()
+        #     .subquery()
+        # )
+        #
+        # # Запрос для подсчета уникальных значений
+        # result = await session.execute(select(func.count(subquery.c.value)))
+        # unique_count = result.scalar()
+        #
+        # subquery = (
+        #     select(func.unnest(RequestProduct.products).label('value'))
+        #     .where(RequestProduct.city == 1)
+        #     .distinct()
+        #     .subquery()
+        # )
 
         # Запрос для подсчета уникальных значений
-        result = await session.execute(select(func.count(subquery.c.value)))
+        result = await session.execute(select(func.count()).select_from(RequestProduct).where(RequestProduct.city == 1))
         unique_count = result.scalar()
     logger.info(unique_count)
 
