@@ -122,7 +122,7 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 # elif res.get("log", {}).get("tp") and counter_other <= 5:
                 #     logger.info(f"{res.get("name")}{res.get('log')}")
                 #     counter_other += 1
-                print(f"{{\"qs\": {res.get('name')}, \"wb_id\": {res.get('id')}}},")
+                print(f"{{\"qs\": \"{res.get('name')}\", \"wb_id\": {res.get('id')}}},")
             request_product = {
                 "city": city.id,
                 "query": r.query,
