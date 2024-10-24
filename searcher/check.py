@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.dialects.postgresql import array_agg
 import asyncio
 from db import RequestProduct, Request, Product
@@ -10,6 +10,7 @@ from settings import logger
 
 async def check():
     async with async_session_maker() as session:
+        await session.execute(delete(RequestProduct))
         subquery = (
             select(func.unnest(RequestProduct.products).label('value'))
             .order_by("value")

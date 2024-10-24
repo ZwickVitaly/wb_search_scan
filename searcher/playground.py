@@ -109,20 +109,6 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
-            for res in full_res:
-                # if res.get("log", {}).get("tp") == "a" and counter_a <= 5:
-                #     logger.info(f"{res.get("name")}{res.get('log')}")
-                #     counter_a += 1
-                # elif res.get("log", {}).get("tp") == "b" and counter_b <= 5:
-                #     logger.info(f"{res.get("name")}{res.get('log')}")
-                #     counter_b += 1
-                # elif res.get("log", {}).get("tp") == "c" and counter_c <= 5:
-                #     logger.info(f"{res.get("name")}{res.get('log')}")
-                #     counter_c += 1
-                # elif res.get("log", {}).get("tp") and counter_other <= 5:
-                #     logger.info(f"{res.get("name")}{res.get('log')}")
-                #     counter_other += 1
-                print(f"{{\"qs\": \"{res.get('name')}\", \"wb_id\": {res.get('id')}}},")
             request_product = {
                 "city": city.id,
                 "query": r.query,
