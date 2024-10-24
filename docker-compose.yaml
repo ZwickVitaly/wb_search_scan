@@ -29,6 +29,8 @@ services:
       - .env
     volumes:
       - ./logs:/app_data/logs/searcher
+    ports:
+      - "9013:9013"
     depends_on:
       db:
         condition: service_healthy
