@@ -13,4 +13,5 @@ COPY ./searcher /app
 
 RUN alembic upgrade head
 
-ENTRYPOINT uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013 --reload
+ENTRYPOINT  python playground.py
+# uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013 --reload
