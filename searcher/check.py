@@ -21,12 +21,13 @@ async def check():
         # Запрос для подсчета уникальных значений
         result = await session.execute(select(func.count(subquery.c.value)))
         unique_count = result.scalar()
+        logger.info(unique_count)
 
 
         # Запрос для подсчета уникальных значений
         result = await session.execute(select(func.count()).select_from(RequestProduct).where(RequestProduct.city == 1))
         reqs = result.scalar()
-    logger.info(unique_count // reqs)
+        print(reqs)
 
 
 asyncio.run(check())
