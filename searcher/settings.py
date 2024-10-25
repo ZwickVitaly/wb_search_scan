@@ -23,7 +23,7 @@ logger.add(stdout, level="DEBUG" if DEBUG else "INFO")
 
 TIMEZONE = timezone("Europe/Moscow")
 
-SEARCH_URL = "https://search.wb.ru/exactmatch/ru/common/v4/search"
+SEARCH_URL = "https://search.wb.ru/exactmatch/ru/common/v7/search"
 
 POPULAR_REQUESTS_URL = "https://seller.wildberries.ru/popular-search-requests"
 
