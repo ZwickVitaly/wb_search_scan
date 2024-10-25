@@ -22,12 +22,6 @@ async def check():
         result = await session.execute(select(func.count(subquery.c.value)))
         unique_count = result.scalar()
 
-        subquery = (
-            select(func.unnest(RequestProduct.products).label('value'))
-            .where(RequestProduct.city == 1)
-            .distinct()
-            .subquery()
-        )
 
         # Запрос для подсчета уникальных значений
         result = await session.execute(select(func.count()).select_from(RequestProduct).where(RequestProduct.city == 1))
