@@ -1,7 +1,4 @@
-import json
-
 from sqlalchemy import select, func, delete
-from sqlalchemy.dialects.postgresql import array_agg
 import asyncio
 from db import RequestProduct, Request, Product
 from db.base import async_session_maker

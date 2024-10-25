@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+from itertools import count
 from multiprocessing import Pool
 from aiohttp import ClientSession
 from sqlalchemy import select
@@ -9,11 +10,6 @@ from parser.get_single_query_data import get_query_data
 from db.base import async_session_maker
 from db import City, Request, RequestProduct
 from settings import logger
-
-counter_a = 0
-counter_b = 0
-counter_c = 0
-counter_other = 0
 
 
 async def get_cities_data():
@@ -88,7 +84,6 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
     return x
 
 async def get_r_data(r, city, date, http_session, request_product_queue=None):
-    global counter_a, counter_b, counter_c, counter_other
     while True:
         try:
             full_res = []
@@ -109,9 +104,14 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
+            counter = 0
             for res in full_res:
                 if res.get("log"):
-                    logger.info(f"{res.get('log')}")
+                    counter += 1
+                    if counter >= 2:
+                        logger.critical(f"{res.get('log')}")
+                    else:
+                        logger.info(f"{res.get('log')}")
             request_product = {
                 "city": city.id,
                 "query": r.query,
