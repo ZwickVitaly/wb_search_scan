@@ -23,6 +23,6 @@ celery_app.conf.broker_connection_retry_on_startup = True
 celery_app.conf.beat_schedule = {
     "parse_search": {
         "task": "parse_wb_search",
-        "schedule": crontab(minute="27", hour="22"),
+        "schedule": crontab(minute="32", hour="22"),
     }
 }

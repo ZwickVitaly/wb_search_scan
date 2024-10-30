@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime
-from multiprocessing import Pool
+from billiard.pool import Pool
 from aiohttp import ClientSession
 from clickhouse_db.get_async_connection import get_async_connection
 from parser.get_single_query_data import get_query_data
