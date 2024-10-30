@@ -5,7 +5,7 @@ services:
       - "8123:8123"
       - "9000:9000"
     volumes:
-      - ./app_data:/var/lib/clickhouse
+      - ./app_data/db:/var/lib/clickhouse
 
   searcher:
     build:
@@ -21,25 +21,25 @@ services:
       db:
         condition: service_healthy
 
-#  redis:
-#    image: redis:alpine
-#
-#  celery:
-#    build: .
-#    entrypoint: celery -A tasks.celery_app worker --loglevel=info
-#    volumes:
-#      - ./logs:/app_data/logs/celery
-#    depends_on:
-#      - redis
-#
-#  celery-beat:
-#    build: .
-#    entrypoint: celery -A tasks.celery_app beat --loglevel=info
-#    volumes:
-#      - ./logs:/app_data/logs/celery_beat
-#    depends_on:
-#        - redis
-#
+  redis:
+    image: redis:alpine
+
+  celery:
+    build: .
+    entrypoint: celery -A tasks.celery_app worker --loglevel=info
+    volumes:
+      - ./logs:/app_data/logs/celery
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: .
+    entrypoint: celery -A tasks.celery_app beat --loglevel=info
+    volumes:
+      - ./logs:/app_data/logs/celery_beat
+    depends_on:
+        - redis
+
 
 networks:
   wb_search:

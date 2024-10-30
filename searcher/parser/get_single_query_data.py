@@ -6,7 +6,9 @@ from aiohttp import ClientSession, ContentTypeError, client_exceptions
 from settings import SEARCH_URL, logger
 
 
-async def get_query_data(http_session: ClientSession, query_string, dest, limit, page, rqa=5, timeout=5):
+async def get_query_data(
+    http_session: ClientSession, query_string, dest, limit, page, rqa=5, timeout=5
+):
     _data = {"data": {"products": []}}
     counter = 0
     while len(_data.get("data", {}).get("products", [])) < 2 and counter < rqa:
