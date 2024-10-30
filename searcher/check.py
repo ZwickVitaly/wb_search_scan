@@ -12,7 +12,7 @@ async def check(searched_val, city):
         query = f"""SELECT sd.query, sd.quantity, groupArray((sd.date, indexOf(sd.products, {searched_val}) AS product_index)) AS date_info
         FROM (SELECT rp.query, rp.date, r.quantity, rp.products
         FROM request_product AS rp
-        JOIN request FINAL AS r ON r.query = rp.query
+        JOIN (SELECT * FROM request FINAL) AS r ON r.query = rp.query
         WHERE has(rp.products, {searched_val})
         AND (rp.city = {city})
         AND (rp.date BETWEEN '2024-10-29' AND '2024-10-31')
