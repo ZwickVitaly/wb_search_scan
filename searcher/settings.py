@@ -40,3 +40,8 @@ POSTGRES_CONFIG = {
 
 }
 
+CLICKHOUSE_CONFING = {
+    "host": os.getenv("CLICKHOUSE_DB_NAME", "localhost"),
+    "username": os.getenv("CLICKHOUSE_USERNAME", "default")
+}
+

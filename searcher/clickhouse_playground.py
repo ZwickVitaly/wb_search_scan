@@ -1,30 +1,30 @@
 import asyncio
 from datetime import datetime
-from itertools import count
 from multiprocessing import Pool
 from aiohttp import ClientSession
+from pydantic import with_config
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-
+from clickhouse_db.get_async_connection import get_async_connection
 from parser.get_single_query_data import get_query_data
-from db.base import async_session_maker
-from db import City, Request, RequestProduct
 from settings import logger
 
 
 async def get_cities_data():
-    async with async_session_maker() as s:
-        q = await s.execute(select(City).limit(1))
-        cities = q.scalars()
+    async with get_async_connection() as client:
+        query = "SELECT dest FROM city FINAL;"
+        q = await client.query(query)
+        cities = [rr[0] for rr in q.result_rows]
     return cities
 
 async def get_requests_data():
-    async with async_session_maker() as s:
-        q = await s.execute(select(Request).order_by(Request.quantity.desc()))
-        requests = q.scalars()
+    async with get_async_connection() as client:
+        query = "SELECT * FROM request WHERE updated = (SELECT max(updated) FROM request);"
+        q = await client.query(query)
+        requests = [rr[0] for rr in q.result_rows]
     return requests
 
-async def save_to_db(queue, model, update=False):
+async def save_to_db(queue, table, fields):
     while True:
         items = []
         item = None
@@ -38,20 +38,8 @@ async def save_to_db(queue, model, update=False):
                 items.append(item)
             queue.task_done()
         if items:
-            async with async_session_maker() as session:
-                if not update:
-                    await session.execute(insert(model).values(items))
-                else:
-                    primary_fields = [col.name for col in model.__table__.columns if col.primary_key]
-                    try:
-                        await session.execute(
-                            insert(model).values(items).on_conflict_do_nothing(
-                                index_elements=primary_fields,
-                            )
-                        )
-                    except Exception as e:
-                        logger.error(f"{e}")
-                await session.commit()
+            async with get_async_connection() as client:
+                await client.insert(table, items, column_names=fields)
         if item is None:
             await queue.put(item)
             break
@@ -90,8 +78,8 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
             tasks = [
                 asyncio.create_task(
                     try_except_query_data(
-                        query_string=r.query,
-                        dest=city.dest,
+                        query_string=r,
+                        dest=city,
                         limit=300,
                         page=i,
                         rqa=4,
@@ -112,13 +100,12 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                         logger.critical(f"{res.get('log')}")
                     else:
                         logger.info(f"{res.get('log')}")
-            request_product = {
-                "city": city.id,
-                "query": r.query,
-                "products": [p.get("id") for p in full_res],
-                "natural_positions": [p.get("log", {}).get("position", 0) for p in full_res],
-                "date": date
-            }
+            request_product = [
+                city,
+                r,
+                [p.get("id") for p in full_res],
+                date
+            ]
             await request_product_queue.put(request_product)
             return
         except Exception as e:
@@ -126,11 +113,11 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
             break
 
 async def get_city_result(city, date):
-    requests = [r for r in await get_requests_data() if not r.query.isdigit()]
+    requests = [r for r in await get_requests_data() if not r.isdigit()]
     request_product_queue = asyncio.Queue()
     workers_queue = asyncio.Queue()
     request_product_save_task = [
-        asyncio.create_task(save_to_db(request_product_queue, RequestProduct)) for _ in range(5)
+        asyncio.create_task(save_to_db(request_product_queue, "request_product", ["city", "query", "products", "date"])) for _ in range(5)
     ]
     async with ClientSession() as http_session:
         requests_tasks = [
@@ -162,7 +149,6 @@ async def get_results():
     logger.info("Вход в программу")
     today = datetime.now().date()
     cities = await get_cities_data()
-    cities = list(cities)
     with Pool(len(cities)) as p:
         tasks = [
             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
@@ -179,4 +165,4 @@ async def get_results():
     )
 
 
-asyncio.run(get_results())
+print(asyncio.run(get_results()))

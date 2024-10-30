@@ -1,9 +1,9 @@
+from clickhouse_connect.driver import AsyncClient
 from fastapi import APIRouter, File, UploadFile, BackgroundTasks
 from fastapi.params import Body
 from fastapi.responses import JSONResponse
 
-from db import City
-from db.base import async_session_maker
+from clickhouse_db.get_async_connection import get_async_connection
 from server.funcs.prepare_csv_contents import prepare_csv_contents
 from server.funcs.upload_requests_data import upload_requests_csv_bg
 from settings import logger
@@ -28,12 +28,12 @@ async def upload_csv(background_tasks: BackgroundTasks, file: UploadFile = File(
     )
 
 @csv_router.post("/add_cities")
-async def upload_csv(cities: list[dict] = Body()):
+async def upload_csv(cities: dict[str, int] = Body()):
     try:
-        async with async_session_maker() as session:
-            for city in cities:
-                session.add(City(name=city.get("name"), dest=city.get("dest")))
-            await session.commit()
+        cities_data = [(key, val) for key, val in cities.items()]
+        async with get_async_connection() as client:
+            client: AsyncClient = client
+            await client.insert("city", cities_data, column_names=["name", "dest"])
     except Exception as e:
         logger.error(f"{e}")
         return {"message": "Error with cities"}
