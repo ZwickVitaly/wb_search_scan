@@ -16,8 +16,8 @@ async def check(searched_val, city):
         WHERE has(rp.products, {searched_val})
         AND (rp.city = {city})
         AND (rp.date BETWEEN '2024-10-29' AND '2024-10-31')
-        FINAL 
         ORDER BY rp.date, r.quantity DESC
+        FINAL 
         ) AS sd
         GROUP BY sd.query, sd.quantity
         ORDER BY sd.query, sd.quantity DESC;"""
