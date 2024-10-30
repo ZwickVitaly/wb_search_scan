@@ -37,7 +37,7 @@ async def try_except_query_data(query_string, dest, limit, page, http_session, r
             limit=limit,
             page=page,
             rqa=rqa,
-            timeout=10,
+            timeout=3,
         )
     except ValueError:
         x = {"products": []}
@@ -56,7 +56,7 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                         dest=city,
                         limit=300,
                         page=i,
-                        rqa=4,
+                        rqa=3,
                         http_session=http_session,
                     )
                 )
