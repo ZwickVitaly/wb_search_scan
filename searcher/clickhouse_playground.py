@@ -39,7 +39,7 @@ async def save_to_db(queue, table, fields):
                 async with get_async_connection() as client:
                     await client.insert(table, items, column_names=fields)
             except Exception as e:
-                logger.critical(f"{e}")
+                logger.critical(f"{e}, {items}")
         if item is None:
             await queue.put(item)
             break
