@@ -9,16 +9,16 @@ from settings import logger
 async def check(searched_val, city):
     async with get_async_connection() as client:
         client: AsyncClient = client
-        query = f"""SELECT rp.query, groupArray(
-        (rp.date, r.quantity, indexOf(rp.products, {searched_val}) AS product_index)
+        query = f"""SELECT rp.query, groupArray((rp.date, r.quantity, indexOf(rp.products, {searched_val}) AS product_index)) AS date_info
+        FROM (SELECT rp.query, rp.date, r.quantity, rp.products 
+        FROM request_product AS rp JOIN
+        request AS r ON r.query = rp.query 
+        WHERE has(rp.products, {searched_val})
+        AND (rp.city = {city}) 
+        AND (rp.date BETWEEN '2024-10-29' AND 2024-10-31)
         ORDER BY rp.date, r.quantity DESC
-        ) AS date_info 
-        FROM request_product AS rp 
-        JOIN request AS r ON r.query = rp.query 
-        WHERE has(rp.products, {searched_val}) 
-        AND (rp.city = {city})
-        AND (rp.date BETWEEN '2024-10-28' AND '2024-10-31')  
-        GROUP BY rp.query   
+        ) AS sorted_data 
+        GROUP BY rp.query 
         ORDER BY rp.query;"""
         # query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY r.quantity DESC;"
         # query = f"SELECT city, count(*) FROM request_product GROUP BY city;"
