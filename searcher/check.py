@@ -20,7 +20,7 @@ WHERE
 ORDER BY 
     product_index;"""
         res = await client.query(query)
-        logger.info(f"{'\n'.join([str((str(date), query, product_index)) for date, query, product_index in res.result_rows])}")
+        logger.info(res.result_rows)
 
 
 asyncio.run(check(212296429, -1257786))
