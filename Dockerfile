@@ -1,5 +1,6 @@
 FROM python:3.12-alpine
 
+RUN apk update && apk upgrade --no-cache
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
@@ -11,5 +12,4 @@ RUN poetry config virtualenvs.create false \
 
 COPY ./searcher /app
 
-ENTRYPOINT alembic upgrade head && python playground.py
-#ENTRYPOINT uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013
+ENTRYPOINT uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013

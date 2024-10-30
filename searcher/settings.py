@@ -29,6 +29,7 @@ POPULAR_REQUESTS_URL = "https://seller.wildberries.ru/popular-search-requests"
 
 GEOCODING_URL = "https://openweathermap.org/api/geocoding-api"
 
+REDIS_HOST = os.getenv("REDIS_CONTAINER_NAME", "localhost")
 
 POSTGRES_CONFIG = {
     "driver": "postgresql+asyncpg",

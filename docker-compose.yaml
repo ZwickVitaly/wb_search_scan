@@ -1,9 +1,7 @@
 services:
   db:
     image: yandex/clickhouse-server:latest
-    ports:
-      - "8123:8123"
-      - "9000:9000"
+    container_name: ${CLICKHOUSE_DB_NAME}
     volumes:
       - ./app_data/db:/var/lib/clickhouse
 
@@ -22,11 +20,13 @@ services:
         condition: service_healthy
 
   redis:
+    container_name: ${REDIS_CONTAINER_NAME}
     image: redis:alpine
 
   celery:
     build: .
-    entrypoint: celery -A tasks.celery_app worker --loglevel=info
+    container_name: wb_searcher_celery
+    entrypoint: celery -A celery_main.celery_app worker --loglevel=info
     volumes:
       - ./logs:/app_data/logs/celery
     depends_on:
@@ -34,7 +34,8 @@ services:
 
   celery-beat:
     build: .
-    entrypoint: celery -A tasks.celery_app beat --loglevel=info
+    container_name: wb_searcher_celery_beat
+    entrypoint: celery -A celery_main.celery_app beat --loglevel=info
     volumes:
       - ./logs:/app_data/logs/celery_beat
     depends_on:
