@@ -25,4 +25,4 @@ async def check(searched_val, city):
         logger.info(res.result_rows)
 
 
-asyncio.run(check((212296429, 238552341), -1257786))
+asyncio.run(check((212296429, 238552341, 196119668), -1257786))
