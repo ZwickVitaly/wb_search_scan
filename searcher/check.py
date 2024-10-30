@@ -15,7 +15,8 @@ async def check(searched_val, city):
         # query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY r.quantity DESC;"
         # query = f"SELECT city, count(*) FROM request_product GROUP BY city;"
         res = await client.query(query)
-        logger.info(res.result_rows)
+        json_result = [{"date": str(row[0]), "products": row[1]} for row in res]
+        logger.info(json_result)
 
 
 asyncio.run(check(212296429, -1257786))
