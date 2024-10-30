@@ -4,6 +4,9 @@ services:
     container_name: ${CLICKHOUSE_DB_NAME}
     volumes:
       - ./app_data/db:/var/lib/clickhouse
+    ports:
+      - "9000:9000"
+      - "8123:8123"
 
   searcher:
     build:
