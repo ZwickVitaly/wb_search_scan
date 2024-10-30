@@ -19,7 +19,7 @@ async def check(searched_val, city):
         # query = f"SELECT city, count(*) FROM request_product GROUP BY city;"
         res = await client.query(query)
         # json_result = [{"date": str(row[0]), "products": row[1]} for row in res.result_rows]
-        logger.info(res)
+        logger.info(res.result_rows)
 
 
 asyncio.run(check(212296429, -1257786))
