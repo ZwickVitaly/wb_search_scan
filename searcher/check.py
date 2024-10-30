@@ -6,8 +6,7 @@ from settings import logger
 
 async def check(searched_val, city):
     async with get_async_connection() as client:
-        query = f"""
-            SELECT 
+        query = f"""SELECT 
                 rp.date,    
                 rp.query,
                 r.quantity,
@@ -21,8 +20,7 @@ async def check(searched_val, city):
             AND 
                 (rp.city = {city})
             ORDER BY 
-            r.quantity DESC;
-        """
+            r.quantity DESC;"""
         res = await client.query(query)
         logger.info(res.result_rows)
 
