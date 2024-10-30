@@ -2,9 +2,6 @@ import asyncio
 from datetime import datetime
 from multiprocessing import Pool
 from aiohttp import ClientSession
-from pydantic import with_config
-from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
 from clickhouse_db.get_async_connection import get_async_connection
 from parser.get_single_query_data import get_query_data
 from settings import logger
@@ -92,14 +89,6 @@ async def get_r_data(r, city, date, http_session, request_product_queue=None):
                 full_res.extend(res.get("products", []))
             if not full_res:
                 full_res = []
-            counter = 0
-            for res in full_res:
-                if res.get("log"):
-                    counter += 1
-                    if counter >= 2:
-                        logger.critical(f"{res.get('log')}")
-                    else:
-                        logger.info(f"{res.get('log')}")
             request_product = [
                 city,
                 r,
