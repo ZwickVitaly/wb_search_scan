@@ -20,7 +20,7 @@ async def check(searched_val, city):
         #         (rp.city = {city})
         #     ORDER BY
         #     r.quantity DESC;"""
-        query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY rp.query;"
+        query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY r.quantity DESC;"
         res = await client.query(query)
         logger.info(res.result_rows)
 
