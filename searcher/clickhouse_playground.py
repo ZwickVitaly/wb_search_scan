@@ -52,6 +52,7 @@ async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, request_p
         if r is None:
             await queue.put(r)
             break
+        logger.info("Запрос пошёл")
         await get_r_data(r=r, city=city, date=date, http_session=http_session, request_product_queue=request_product_queue)
         queue.task_done()
 
@@ -122,7 +123,7 @@ async def get_city_result(city, date):
                     http_session=http_session,
                     request_product_queue=request_product_queue
                 )
-            ) for _ in range(20)
+            ) for _ in range(10)
         ]
         while requests:
             await workers_queue.put(requests.pop())
