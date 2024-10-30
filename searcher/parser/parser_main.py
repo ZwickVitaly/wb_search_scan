@@ -103,7 +103,7 @@ async def get_city_result(city, date):
                     request_product_queue=request_product_queue,
                 )
             )
-            for _ in range(15)
+            for _ in range(45)
         ]
         while requests:
             try:
