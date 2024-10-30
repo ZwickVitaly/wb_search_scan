@@ -1,7 +1,4 @@
 import asyncio
-
-from clickhouse_connect.driver import AsyncClient
-
 from clickhouse_db.get_async_connection import get_async_connection
 from settings import logger
 
