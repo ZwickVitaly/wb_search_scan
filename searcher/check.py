@@ -20,7 +20,7 @@ async def check(searched_val, city):
         #         (rp.city = {city})
         #     ORDER BY
         #     r.quantity DESC;"""
-        query = f"SELECT count(*) FROM request_products WHERE city = {city};"
+        query = f"SELECT count(*) FROM request_product WHERE city = {city};"
         res = await client.query(query)
         logger.info(res.result_rows)
 
