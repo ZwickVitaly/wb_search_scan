@@ -1,4 +1,3 @@
-from sqlalchemy import select, func, delete
 import asyncio
 
 from clickhouse_db.get_async_connection import get_async_connection
