@@ -27,6 +27,8 @@ services:
     build: .
     container_name: wb_searcher_celery
     entrypoint: celery -A celery_main.celery_app worker --loglevel=info
+    env_file:
+      - .env
     volumes:
       - ./logs:/app_data/logs/celery
     depends_on:
@@ -36,6 +38,8 @@ services:
     build: .
     container_name: wb_searcher_celery_beat
     entrypoint: celery -A celery_main.celery_app beat --loglevel=info
+    env_file:
+      - .env
     volumes:
       - ./logs:/app_data/logs/celery_beat
     depends_on:
