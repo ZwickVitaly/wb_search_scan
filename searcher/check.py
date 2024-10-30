@@ -19,7 +19,7 @@ WHERE
     has(rp.products, 212296429) 
     AND (rp.city = -1257786)
 ORDER BY 
-    product_index;"""
+    r.quantity DESC;"""
         res = await client.query(query)
         logger.info(res.result_rows)
 
