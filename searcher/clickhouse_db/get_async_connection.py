@@ -16,7 +16,7 @@ class AsyncSession:
     def __init__(self, clickhouse_config):
         self.config = clickhouse_config
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> AsyncClient:
         self.client = await clickhouse_connect.get_async_client(**self.config)
         return self.client
 
