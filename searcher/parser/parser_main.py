@@ -110,29 +110,29 @@ async def get_city_result(city, date):
         await asyncio.gather(*request_product_save_task)
 
 
-def run_pool_threads(func, *args, **kwargs):
-    try:
-        asyncio.run(func(*args, **kwargs))
-    except Exception as e:
-        logger.critical(f"Сбор данных не начался! Причина: {e}")
+# def run_pool_threads(func, *args, **kwargs):
+#     try:
+#         asyncio.run(func(*args, **kwargs))
+#     except Exception as e:
+#         logger.critical(f"Сбор данных не начался! Причина: {e}")
 
 
-async def get_results():
-    start_time = datetime.now()
-    logger.info("Вход в программу")
-    today = datetime.now().date()
-    cities = await get_cities_data()
-    with Pool(len(cities)) as p:
-        tasks = [
-            p.apply_async(run_pool_threads, args=[get_city_result, city, today])
-            for city in cities
-        ]
-        p.close()
-        p.join()
-    end_time = datetime.now()
-    delta = (start_time - end_time).seconds
-    logger.info(
-        f"Старт парса: {start_time.strftime('%H:%M %d.%m.%Y')}\n"
-        f"Завершение парса: {end_time.strftime('%H:%M %d.%m.%Y')}\n"
-        f"Выполнено за: {delta // 60 // 60} часов, {delta // 60} минут"
-    )
+# async def get_results():
+#     start_time = datetime.now()
+#     logger.info("Вход в программу")
+#     today = datetime.now().date()
+#     cities = await get_cities_data()
+#     with Pool(len(cities)) as p:
+#         tasks = [
+#             p.apply_async(run_pool_threads, args=[get_city_result, city, today])
+#             for city in cities
+#         ]
+#         p.close()
+#         p.join()
+#     end_time = datetime.now()
+#     delta = (start_time - end_time).seconds
+#     logger.info(
+#         f"Старт парса: {start_time.strftime('%H:%M %d.%m.%Y')}\n"
+#         f"Завершение парса: {end_time.strftime('%H:%M %d.%m.%Y')}\n"
+#         f"Выполнено за: {delta // 60 // 60} часов, {delta // 60} минут"
+#     )

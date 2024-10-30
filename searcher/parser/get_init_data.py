@@ -5,7 +5,7 @@ async def get_cities_data():
     async with get_async_connection() as client:
         query = "SELECT dest FROM city FINAL;"
         q = await client.query(query)
-        cities = [rr[0] for rr in q.result_rows]
+        cities = [city[0] for city in q.result_rows]
     return cities
 
 

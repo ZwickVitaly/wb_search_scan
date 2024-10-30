@@ -26,7 +26,7 @@ services:
   celery:
     build: .
     container_name: wb_searcher_celery
-    entrypoint: celery -A celery_main.celery_app worker --loglevel=info
+    entrypoint: celery -A celery_main.celery_app worker --concurrency=4 --loglevel=info
     env_file:
       - .env
     volumes:
