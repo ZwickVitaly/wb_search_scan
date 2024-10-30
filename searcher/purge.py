@@ -1,18 +1,24 @@
 import asyncio
 
-from sqlalchemy import delete
-
-from db import RequestProduct, Product
-from db.base import async_session_maker
+import clickhouse_connect
+from settings import CLICKHOUSE_CONFING, logger
 
 
-async def check():
-    async with async_session_maker() as session:
-        await session.execute(delete(RequestProduct))
-        await session.commit()
-    async with async_session_maker() as session:
-        await session.execute(delete(Product))
-        await session.commit()
+async def setup_database():
+    client = clickhouse_connect.get_client(**CLICKHOUSE_CONFING)
 
+    # Создание таблицы City
+    client.command('DROP TABLE IF EXISTS city')
 
-asyncio.run(check())
+    # Создание таблицы City
+    client.command('DROP TABLE IF EXISTS request')
+
+    # Создание таблицы City
+    client.command('DROP TABLE IF EXISTS request_product')
+
+    logger.info("Tables deleted successfully.")
+    tables = client.query("SHOW TABLES")
+    logger.info(tables.result_rows)
+    client.close()
+
+asyncio.run(setup_database())
