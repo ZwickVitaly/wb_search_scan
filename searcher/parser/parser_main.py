@@ -106,7 +106,14 @@ async def get_city_result(city, date):
             for _ in range(15)
         ]
         while requests:
-            await workers_queue.put(requests.pop())
+            try:
+                await workers_queue.put(requests.pop())
+                await workers_queue.put(requests.pop())
+                await workers_queue.put(requests.pop())
+                await workers_queue.put(requests.pop())
+            except Exception as e:
+                logger.error(f"{e}")
+                pass
         await workers_queue.put(None)
         await asyncio.gather(*requests_tasks)
         await request_product_queue.put(None)
