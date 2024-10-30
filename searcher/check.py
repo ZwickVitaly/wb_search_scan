@@ -6,7 +6,7 @@ from settings import logger
 
 async def check(searched_val):
     async with get_async_connection() as client:
-        query = f"SELECT query, indexOf(products, {searched_val}) AS product_index FROM request_product WHERE has(products, {searched_val}) AND city = -1257786;"
+        query = f"SELECT query, indexOf(products, {searched_val}) AS product_index FROM request_product WHERE has(products, {searched_val}) AND city = -1257786 ORDER BY product_index;"
         res = await client.query(query)
         logger.info(res.result_rows)
 
