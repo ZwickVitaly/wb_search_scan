@@ -43,7 +43,7 @@ async def check(searched_val, city):
                 "quantity": row[1],
                 "dates": {
                     str(j_row[0]): j_row[1]
-                    for j_row in row[3]
+                    for j_row in row[2]
                 }
             }
             for row in query_result.result_rows
