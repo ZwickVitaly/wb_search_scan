@@ -29,8 +29,6 @@ async def save_to_db(queue, table, fields):
             item = await queue.get()
             if item is None:
                 break
-            if isinstance(item, list):
-                items.extend(item)
             else:
                 items.append(item)
             queue.task_done()
