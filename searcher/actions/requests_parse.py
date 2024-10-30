@@ -7,7 +7,7 @@ from celery_main import celery_app
 from settings import logger
 
 
-@celery_app.task
+@celery_app.task(name="process_city")
 async def process_city(city, date):
     start_time = datetime.now()
     logger.info(f"Вход в search: {city}")
@@ -21,7 +21,7 @@ async def process_city(city, date):
     )
 
 
-@celery_app.task
+@celery_app.task(name="fire_requests")
 def fire_requests():
     today = datetime.now(tz=pytz.timezone("Europe/Moscow")).date()
     cities = asyncio.run(get_cities_data())
