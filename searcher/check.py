@@ -15,7 +15,7 @@ async def check(searched_val, city):
         request AS r ON r.query = rp.query 
         WHERE has(rp.products, {searched_val})
         AND (rp.city = {city}) 
-        AND (rp.date BETWEEN '2024-10-29' AND 2024-10-31)
+        AND (rp.date BETWEEN '2024-10-29' AND '2024-10-31')
         ORDER BY rp.date, r.quantity DESC
         ) AS sorted_data 
         GROUP BY rp.query 
