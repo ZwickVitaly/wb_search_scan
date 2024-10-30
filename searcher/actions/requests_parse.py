@@ -8,10 +8,10 @@ from settings import logger
 
 
 @celery_app.task(name="process_city")
-async def process_city(city, date):
+def process_city(city, date):
     start_time = datetime.now()
     logger.info(f"Вход в search: {city}")
-    await get_city_result(city, date)
+    asyncio.run(get_city_result(city, date))
     end_time = datetime.now()
     delta = (start_time - end_time).seconds
     logger.info(
