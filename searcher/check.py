@@ -9,10 +9,10 @@ from settings import logger
 async def check(searched_val, city):
     async with get_async_connection() as client:
         client: AsyncClient = client
-        query = f"""SELECT sd.query, groupArray((rp.date, r.quantity, indexOf(rp.products, {searched_val}) AS product_index)) AS date_info
+        query = f"""SELECT sd.query, groupArray((sd.date, sd.quantity, indexOf(sd.products, {searched_val}) AS product_index)) AS date_info
         FROM (SELECT rp.query, rp.date, r.quantity, rp.products 
-        FROM request_product AS rp JOIN
-        request AS r ON r.query = rp.query 
+        FROM request_product AS rp 
+        JOIN request AS r ON r.query = rp.query 
         WHERE has(rp.products, {searched_val})
         AND (rp.city = {city}) 
         AND (rp.date BETWEEN '2024-10-29' AND '2024-10-31')
