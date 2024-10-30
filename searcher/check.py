@@ -20,9 +20,9 @@ async def check(searched_val, city):
         #         (rp.city = {city})
         #     ORDER BY
         #     r.quantity DESC;"""
-        query = f"SELECT count(*) FROM request_product WHERE city = {city};"
+        query = f"SELECT query FROM request_product WHERE city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products);"
         res = await client.query(query)
         logger.info(res.result_rows)
 
 
-asyncio.run(check(212296429, -1257786))
+asyncio.run(check((212296429, 238552341), -1257786))
