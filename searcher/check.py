@@ -18,8 +18,8 @@ async def check(searched_val, city):
         AND (rp.date BETWEEN '2024-10-29' AND '2024-10-31')
         ORDER BY rp.date, r.quantity DESC
         ) AS sd
-        GROUP BY sd.query
-        ORDER BY sd.query;"""
+        GROUP BY sd.query, sd.quantity
+        ORDER BY sd.query, sd.quantity;"""
         # query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY r.quantity DESC;"
         # query = f"SELECT city, count(*) FROM request_product GROUP BY city;"
         res = await client.query(query)
