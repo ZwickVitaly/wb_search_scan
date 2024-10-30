@@ -11,4 +11,4 @@ RUN poetry config virtualenvs.create false \
 
 COPY ./searcher /app
 
-ENTRYPOINT python setup.py && uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013
+ENTRYPOINT uvicorn main:app --workers 2 --host 0.0.0.0 --port 9013
