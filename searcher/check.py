@@ -13,7 +13,7 @@ async def check(searched_val, city):
 FROM 
     request_product AS rp
 JOIN 
-    Request AS r ON r.query = rp.query
+    request AS r ON r.query = rp.query
 WHERE 
     has(rp.products, 212296429) 
     AND (rp.city = -1257786)
