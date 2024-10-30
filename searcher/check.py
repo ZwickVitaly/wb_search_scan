@@ -19,7 +19,7 @@ async def check(searched_val, city):
         ORDER BY rp.date, r.quantity DESC
         ) AS sd
         GROUP BY sd.query, sd.quantity
-        ORDER BY sd.query, sd.quantity;"""
+        ORDER BY sd.query, sd.quantity DESC;"""
         # query = f"SELECT rp.query, r.quantity FROM request_product as rp JOIN request AS r ON r.query = rp.query WHERE rp.city = {city} AND arrayExists(x -> x IN {searched_val}, rp.products) ORDER BY r.quantity DESC;"
         # query = f"SELECT city, count(*) FROM request_product GROUP BY city;"
         res = await client.query(query)
