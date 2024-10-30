@@ -6,20 +6,23 @@ from settings import logger
 
 async def check(searched_val, city):
     async with get_async_connection() as client:
-        query = f"""SELECT 
-    rp.date,    
-    rp.query,
-    r.quantity,
-    indexOf(rp.products, 212296429) AS product_index
-FROM 
-    request_product AS rp
-JOIN 
-    request AS r ON r.query = rp.query
-WHERE 
-    has(rp.products, 212296429) 
-    AND (rp.city = -1257786)
-ORDER BY 
-    r.quantity DESC;"""
+        query = f"""
+            SELECT 
+                rp.date,    
+                rp.query,
+                r.quantity,
+                indexOf(rp.products, {searched_val}) AS product_index
+            FROM 
+                request_product AS rp
+            JOIN 
+                request AS r ON r.query = rp.query
+            WHERE 
+                has(rp.products, {searched_val}) 
+            AND 
+                (rp.city = {city})
+            ORDER BY 
+            r.quantity DESC;
+        """
         res = await client.query(query)
         logger.info(res.result_rows)
 
