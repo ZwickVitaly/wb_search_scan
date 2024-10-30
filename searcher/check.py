@@ -7,7 +7,7 @@ from settings import logger
 async def check(searched_val, city):
     async with get_async_connection() as client:
         query = f"""SELECT 
-    r.date,    
+    rp.date,    
     rp.query,
     r.quantity,
     indexOf(rp.products, 212296429) AS product_index
