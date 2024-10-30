@@ -21,5 +21,4 @@ class AsyncSession:
         return self.client
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        self.client.executor.shutdown(wait=False, cancel_futures=True)
         self.client.close()
