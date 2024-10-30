@@ -52,7 +52,6 @@ async def get_r_data_q(queue: asyncio.Queue, city, date, http_session, request_p
         if r is None:
             await queue.put(r)
             break
-        logger.info("Запрос пошёл")
         await get_r_data(r=r, city=city, date=date, http_session=http_session, request_product_queue=request_product_queue)
         queue.task_done()
 
