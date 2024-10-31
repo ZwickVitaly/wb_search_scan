@@ -56,4 +56,4 @@ async def check(searched_val, city):
         return dict(query_result.result_rows)
 
 
-logger.info(asyncio.run(check(212296429, -1257786)))
+logger.info(asyncio.run(check([212296429], -1257786)))
