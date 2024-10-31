@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.params import Body, Query
 
-from server.funcs.get_keywords_data import get_keywords_db_data
+from server.funcs.get_keywords_data import get_keywords_payload
 from server.funcs.get_product_query_data import get_product_query_payload
 
 
@@ -16,5 +16,5 @@ async def get_product_queries(product_id: int = Query(), city: int = Query(), in
 
 @query_router.post("/get_keywords")
 async def get_products_keywords(products_ids: list[int] = Body()):
-    result = await get_keywords_db_data(products=products_ids)
+    result = await get_keywords_payload(products=products_ids)
     return result

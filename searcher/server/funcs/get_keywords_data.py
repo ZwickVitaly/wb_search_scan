@@ -14,10 +14,7 @@ async def get_keywords_db_data(products, city=-1257786):
         return query_result.result_rows
 
 
-async def get_product_query_payload(product_id):
-    query_result = await get_keywords_db_data(product_id)
-    payload = {
-        row[0]: row[1]
-        for row in query_result
-    }
+async def get_keywords_payload(products):
+    query_result = await get_keywords_db_data(products)
+    payload = dict(query_result)
     return payload
