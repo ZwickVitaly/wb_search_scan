@@ -29,7 +29,7 @@ async def get_product_query_payload(product_id, interval, city):
                 for j_row in row[3]
             }
         }
-        for row in query_result.result_rows
+        for row in query_result
     ]
     return payload
 
